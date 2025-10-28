@@ -376,10 +376,7 @@ Ce serait la suite logique pour poser les bases du développement.
 
 **Step 1**
 
-- create route POST messages (add new message into conversation)
-- Create service to call POST messages request
-- Create componant MessageForm
-
-**Step 2**
-
-- Refetch MessageList after new message is added
+- [ ] Créer une API route pour supprimer un message
+- [ ] Add methode delete to message service
+- [ ] Créer un composant Button for delete message
+- [ ] Create mutation react query on delete message button (invalidate query on success)

@@ -39,9 +39,20 @@ export async function createMessage(messageDTO: MessageDTO) {
   return response.json();
 }
 
+export async function deleteMessage(id: string) {
+  const response = await fetch(`/api/messages/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to delete message");
+  }
+  return response.json();
+}
+
 const MessageService = {
   fetchMessages,
   createMessage,
+  deleteMessage,
 };
 
 export default MessageService;
