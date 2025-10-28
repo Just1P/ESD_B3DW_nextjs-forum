@@ -1,10 +1,13 @@
+import { Message } from "@/generated/prisma";
 import { MessageDTO } from "@/types/message.type";
 
 interface FetchMessageParams {
   conversationId?: string;
 }
 
-export async function fetchMessages(params?: FetchMessageParams) {
+export async function fetchMessages(
+  params?: FetchMessageParams
+): Promise<Message[]> {
   const queryParams = new URLSearchParams();
 
   if (params?.conversationId) {

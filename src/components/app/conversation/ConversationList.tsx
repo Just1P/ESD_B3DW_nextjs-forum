@@ -25,8 +25,6 @@ export default function ConversationList() {
 
   return (
     <div className="container mx-auto">
-      <h1>Liste des conversations</h1>
-
       {conversations.length === 0 ? (
         <p>Aucune conversation disponible.</p>
       ) : (

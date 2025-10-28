@@ -1,5 +1,7 @@
 import MessageForm from "@/components/app/message/MessageForm";
 import MessageList from "@/components/app/message/MessageList";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface ConversationDetailPageProps {
   params: Promise<{ id: string }>;
@@ -16,7 +18,16 @@ export default async function ConversationDetailPage({
 
   return (
     <div className="container mx-auto">
-      <h1>{conversation?.title}</h1>
+      <div className="my-4">
+        <Link href="/" className="flex items-center mb-4">
+          <Button variant="link">&larr; Back to Conversations</Button>
+        </Link>
+      </div>
+
+      <div className="bg-amber-100 p-4 rounded-md text-xl flex items-center gap-2">
+        Subject:
+        <h1>{conversation?.title}</h1>
+      </div>
 
       <div>
         <MessageForm conversationId={id} />
