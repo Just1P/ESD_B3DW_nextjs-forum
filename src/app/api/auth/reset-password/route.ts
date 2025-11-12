@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { validatePassword } from "@/lib/password-validation";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -12,27 +13,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (password.length < 8) {
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
       return NextResponse.json(
-        { error: "Le mot de passe doit contenir au moins 8 caractères" },
+        { error: passwordValidation.error },
         { status: 400 }
       );
     }
 
-    // Utiliser l'API Better Auth pour réinitialiser le mot de passe
-    const response = await auth.api.resetPassword({
+    await auth.api.resetPassword({
       body: {
         token,
         newPassword: password,
       },
     });
-
-    if (response.error) {
-      return NextResponse.json(
-        { error: response.error.message || "Erreur lors de la réinitialisation" },
-        { status: 400 }
-      );
-    }
 
     return NextResponse.json({
       message: "Mot de passe réinitialisé avec succès",

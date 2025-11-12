@@ -1,0 +1,137 @@
+"use client";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/ui/shadcn-io/dropzone";
+import { useState } from "react";
+import { toast } from "sonner";
+
+interface ImageUploadProps {
+  value?: string;
+  onChange: (url: string) => void;
+  userName?: string;
+}
+
+export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(value);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleDrop = async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+
+    const file = acceptedFiles[0];
+    setUploadedFiles([file]);
+
+    // Prévisualisation locale immédiate
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+
+    setIsUploading(true);
+    try {
+      // Upload vers Vercel Blob via l'API
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erreur lors de l'upload");
+      }
+
+      const data = await response.json();
+
+      // Mettre à jour avec l'URL Vercel Blob
+      onChange(data.url);
+      setPreviewUrl(data.url);
+
+      // Nettoyer l'URL locale
+      URL.revokeObjectURL(localPreview);
+
+      toast.success("Image uploadée avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de l'upload:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de l'upload de l'image"
+      );
+      setPreviewUrl(value);
+      setUploadedFiles([]);
+      // Nettoyer l'URL locale en cas d'erreur
+      URL.revokeObjectURL(localPreview);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleError = (error: Error) => {
+    toast.error(error.message || "Erreur lors de l'upload");
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <Avatar className="h-24 w-24">
+        <AvatarImage src={previewUrl || value} alt="Avatar" />
+        <AvatarFallback className="text-2xl">
+          {getInitials(userName)}
+        </AvatarFallback>
+      </Avatar>
+
+      <div className="w-full">
+        <Dropzone
+          accept={{
+            "image/png": [".png"],
+            "image/jpeg": [".jpg", ".jpeg"],
+            "image/webp": [".webp"],
+          }}
+          maxSize={5 * 1024 * 1024} // 5MB
+          maxFiles={1}
+          onDrop={handleDrop}
+          onError={handleError}
+          src={uploadedFiles}
+          disabled={isUploading}
+          className="h-32"
+        >
+          <DropzoneContent>
+            {isUploading ? (
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-orange-500" />
+                <p className="text-sm text-gray-500">Upload en cours...</p>
+              </div>
+            ) : uploadedFiles.length > 0 ? (
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-sm font-medium">{uploadedFiles[0].name}</p>
+                <p className="text-xs text-gray-500">
+                  Cliquez ou glissez pour remplacer
+                </p>
+              </div>
+            ) : null}
+          </DropzoneContent>
+          <DropzoneEmptyState />
+        </Dropzone>
+
+        <p className="mt-2 text-xs text-gray-500 text-center">
+          PNG, JPG ou WEBP. Max 5MB.
+        </p>
+      </div>
+    </div>
+  );
+}

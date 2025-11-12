@@ -56,19 +56,19 @@ export default async function UserProfilePage({
                     <span className="font-semibold text-gray-900">
                       {user._count.conversations}
                     </span>{" "}
-                    conversation{user._count.conversations > 1 ? "s" : ""}
+                    conversation{user._count.conversations !== 1 ? "s" : ""}
                   </div>
                   <div>
                     <span className="font-semibold text-gray-900">
                       {user._count.messages}
                     </span>{" "}
-                    message{user._count.messages > 1 ? "s" : ""}
+                    message{user._count.messages !== 1 ? "s" : ""}
                   </div>
                   <div>
                     <span className="font-semibold text-gray-900">
                       {user._count.votes}
                     </span>{" "}
-                    vote{user._count.votes > 1 ? "s" : ""}
+                    vote{user._count.votes !== 1 ? "s" : ""}
                   </div>
                 </div>
                 <div className="mt-2 text-sm text-gray-500">
@@ -123,7 +123,9 @@ export default async function UserProfilePage({
                             />
                           </svg>
                           {conversation._count?.messages || 0} réponse
-                          {(conversation._count?.messages || 0) > 1 ? "s" : ""}
+                          {(conversation._count?.messages || 0) !== 1
+                            ? "s"
+                            : ""}
                         </span>
                         <span className="flex items-center gap-1">
                           <svg
@@ -140,7 +142,9 @@ export default async function UserProfilePage({
                             />
                           </svg>
                           {conversation.voteScore} vote
-                          {Math.abs(conversation.voteScore || 0) > 1 ? "s" : ""}
+                          {Math.abs(conversation.voteScore || 0) !== 1
+                            ? "s"
+                            : ""}
                         </span>
                         <span>
                           {formatDistanceToNow(
@@ -165,26 +169,48 @@ export default async function UserProfilePage({
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {user.messages.slice(0, 10).map((message) => (
-                    <Link
-                      key={message.id}
-                      href={`/conversations/${message.conversationId}`}
-                      className="block p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all"
-                    >
-                      <div className="text-xs text-gray-500 mb-2">
-                        Dans{" "}
-                        <span className="font-medium text-gray-700">
-                          {message.Conversation?.title || "Discussion"}
-                        </span>
+                  {user.messages.slice(0, 10).map((message) =>
+                    message.conversationId ? (
+                      <Link
+                        key={message.id}
+                        href={`/conversations/${message.conversationId}`}
+                        className="block p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all"
+                      >
+                        <div className="text-xs text-gray-500 mb-2">
+                          Dans{" "}
+                          <span className="font-medium text-gray-700">
+                            {message.Conversation?.title || "Discussion"}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-900 line-clamp-2 mb-2">
+                          {message.content}
+                        </p>
+                        <div className="text-xs text-gray-500">
+                          {formatDistanceToNow(new Date(message.createdAt))}
+                        </div>
+                      </Link>
+                    ) : (
+                      <div
+                        key={message.id}
+                        className="block p-4 rounded-lg border border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed"
+                        title="Conversation supprimée"
+                      >
+                        <div className="text-xs text-gray-500 mb-2">
+                          Dans{" "}
+                          <span className="font-medium text-gray-700">
+                            {message.Conversation?.title ||
+                              "Discussion supprimée"}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-900 line-clamp-2 mb-2">
+                          {message.content}
+                        </p>
+                        <div className="text-xs text-gray-500">
+                          {formatDistanceToNow(new Date(message.createdAt))}
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-900 line-clamp-2 mb-2">
-                        {message.content}
-                      </p>
-                      <div className="text-xs text-gray-500">
-                        {formatDistanceToNow(new Date(message.createdAt))}
-                      </div>
-                    </Link>
-                  ))}
+                    )
+                  )}
                 </div>
               )}
             </CardContent>

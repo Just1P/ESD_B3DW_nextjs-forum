@@ -127,13 +127,13 @@ export const userService = {
       return null;
     }
 
-    // Calculer le score de votes pour chaque conversation
     const conversationsWithVoteScore = user.conversations.map((conv) => {
-      const voteScore = conv.votes.reduce((acc, vote) => {
+      const { votes, ...rest } = conv;
+      const voteScore = votes.reduce((acc, vote) => {
         return acc + (vote.type === "UP" ? 1 : -1);
       }, 0);
       return {
-        ...conv,
+        ...rest,
         voteScore,
       };
     });
