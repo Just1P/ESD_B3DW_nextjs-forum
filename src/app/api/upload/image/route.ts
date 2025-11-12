@@ -4,8 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      console.error("❌ BLOB_READ_WRITE_TOKEN n'est pas configuré");
+    // Vérifier si un token Blob est configuré (supporte les noms personnalisés)
+    const blobToken =
+      process.env.BLOB_READ_WRITE_TOKEN ||
+      process.env.USER_AVATAR_READ_WRITE_TOKEN;
+
+    if (!blobToken) {
+      console.error("❌ Aucun token Vercel Blob n'est configuré");
       return NextResponse.json(
         {
           error: "Service d'upload non configuré",
@@ -50,6 +55,7 @@ export async function POST(req: NextRequest) {
     const blob = await put(filename, file, {
       access: "public",
       addRandomSuffix: false,
+      token: blobToken,
     });
 
     return NextResponse.json({
