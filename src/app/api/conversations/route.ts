@@ -4,60 +4,76 @@ import { getCurrentUser, requireAuth } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-  const currentUser = await getCurrentUser();
+  try {
+    const currentUser = await getCurrentUser();
 
-  const conversations = await prisma.conversation.findMany({
-    include: {
-      messages: {
-        select: { id: true },
-        where: {
-          deletedAt: null,
+    const conversations = await prisma.conversation.findMany({
+      include: {
+        messages: {
+          select: { id: true },
+          where: {
+            deletedAt: null,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        votes: {
+          select: {
+            type: true,
+            userId: true,
+          },
         },
       },
-      author: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
+      orderBy: {
+        createdAt: "desc",
       },
-      votes: {
-        select: {
-          type: true,
-          userId: true,
-        },
+      where: {
+        deletedAt: null,
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    where: {
-      deletedAt: null,
-    },
-  });
+    });
 
-  const conversationsWithVotes = conversations.map((conversation) => {
-    const upvotes = conversation.votes.filter(
-      (v) => v.type === VoteType.UP
-    ).length;
-    const downvotes = conversation.votes.filter(
-      (v) => v.type === VoteType.DOWN
-    ).length;
-    const voteScore = upvotes - downvotes;
-    const userVote = currentUser
-      ? conversation.votes.find((v) => v.userId === currentUser.id)?.type ||
-        null
-      : null;
+    const conversationsWithVotes = conversations.map((conversation) => {
+      const upvotes = conversation.votes.filter(
+        (v) => v.type === VoteType.UP
+      ).length;
+      const downvotes = conversation.votes.filter(
+        (v) => v.type === VoteType.DOWN
+      ).length;
+      const voteScore = upvotes - downvotes;
+      const userVote = currentUser
+        ? conversation.votes.find((v) => v.userId === currentUser.id)?.type ||
+          null
+        : null;
 
-    return {
-      ...conversation,
-      voteScore,
-      userVote,
-    };
-  });
+      return {
+        ...conversation,
+        voteScore,
+        userVote,
+      };
+    });
 
-  return NextResponse.json(conversationsWithVotes);
+    return NextResponse.json(conversationsWithVotes);
+  } catch (error) {
+    console.error(
+      "❌ Erreur lors de la récupération des conversations:",
+      error
+    );
+    return NextResponse.json(
+      {
+        error: "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur inconnue",
+        details:
+          "Vérifiez que la base de données est accessible et que les migrations ont été exécutées",
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
