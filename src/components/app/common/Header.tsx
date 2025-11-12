@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "@/lib/auth-client";
-import { LogOut, MessageSquare, Settings, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -44,25 +44,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
       <div className="container flex h-12 items-center justify-between mx-auto px-4">
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-          >
-            <MessageSquare className="h-5 w-5 text-orange-500" />
-            <span className="font-bold text-lg">Forum</span>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-4 text-sm">
-            <Link
-              href="/"
-              className="px-3 py-1 rounded-full hover:bg-gray-100 transition-colors font-medium"
-            >
-              Accueil
-            </Link>
-          </nav>
-        </div>
+        <nav className="flex items-center space-x-2">
+          <Button variant="ghost" size="sm" asChild className="h-8">
+            <Link href="/">Accueil</Link>
+          </Button>
+        </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {isPending ? (
             <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
           ) : session?.user ? (
@@ -120,14 +108,14 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" asChild className="h-8">
+            <>
+              <Button variant="ghost" size="sm" asChild className="h-8">
                 <Link href="/signin">Connexion</Link>
               </Button>
               <Button size="sm" asChild className="h-8">
                 <Link href="/signup">Inscription</Link>
               </Button>
-            </div>
+            </>
           )}
         </div>
       </div>

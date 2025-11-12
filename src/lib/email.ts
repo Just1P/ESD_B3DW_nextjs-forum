@@ -3,8 +3,8 @@ import { render } from "@react-email/components";
 import { Resend } from "resend";
 
 if (!process.env.RESEND_API_KEY) {
-  console.error(
-    "⚠️ RESEND_API_KEY n'est pas défini dans les variables d'environnement"
+  throw new Error(
+    "RESEND_API_KEY n'est pas défini dans les variables d'environnement"
   );
 }
 

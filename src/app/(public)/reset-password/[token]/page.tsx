@@ -17,6 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  getPasswordRequirementsText,
+  validatePassword,
+} from "@/lib/password-validation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
@@ -44,22 +48,6 @@ export default function ResetPasswordPage({ params }: ResetPasswordPageProps) {
     },
   });
 
-  const validatePassword = (password: string) => {
-    if (password.length < 8) {
-      return "Le mot de passe doit contenir au moins 8 caractères";
-    }
-    if (!/[A-Z]/.test(password)) {
-      return "Le mot de passe doit contenir au moins une majuscule";
-    }
-    if (!/[a-z]/.test(password)) {
-      return "Le mot de passe doit contenir au moins une minuscule";
-    }
-    if (!/[0-9]/.test(password)) {
-      return "Le mot de passe doit contenir au moins un chiffre";
-    }
-    return true;
-  };
-
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);
 
@@ -74,10 +62,10 @@ export default function ResetPasswordPage({ params }: ResetPasswordPageProps) {
       }
 
       const passwordValidation = validatePassword(data.password);
-      if (passwordValidation !== true) {
+      if (!passwordValidation.valid) {
         form.setError("password", {
           type: "manual",
-          message: passwordValidation,
+          message: passwordValidation.error,
         });
         setIsLoading(false);
         return;
@@ -145,7 +133,7 @@ export default function ResetPasswordPage({ params }: ResetPasswordPageProps) {
                     </FormControl>
                     <FormMessage />
                     <p className="text-xs text-gray-500 mt-1">
-                      Minimum 8 caractères, avec majuscule, minuscule et chiffre
+                      {getPasswordRequirementsText()}
                     </p>
                   </FormItem>
                 )}
@@ -195,4 +183,3 @@ export default function ResetPasswordPage({ params }: ResetPasswordPageProps) {
     </div>
   );
 }
-
