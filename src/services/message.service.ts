@@ -53,6 +53,7 @@ const MessageService = {
   fetchMessages,
   createMessage,
   deleteById,
+  deleteMessage: deleteById,
 };
 
 export default MessageService;
