@@ -30,5 +30,6 @@ class VoteService {
   }
 }
 
-export default new VoteService();
+const voteService = new VoteService();
+export default voteService;
 
