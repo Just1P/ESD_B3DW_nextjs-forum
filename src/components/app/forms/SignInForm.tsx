@@ -19,8 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth-client";
-import { validateEmail } from "@/lib/validation";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/lib/constants";
+import { validateEmail } from "@/lib/validation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,6 +35,8 @@ type SignInFormData = {
 export function SignInForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGithubLoading, setIsGithubLoading] = useState(false);
 
   const form = useForm<SignInFormData>({
     defaultValues: {
@@ -100,6 +102,62 @@ export function SignInForm() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+
+    try {
+      const { data, error } = await signIn.social({
+        provider: "google",
+      });
+
+      if (error) {
+        toast.error(error.message || ERROR_MESSAGES.GENERIC);
+        return;
+      }
+
+      if (data?.redirect && data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Erreur de connexion Google:", error);
+      toast.error(ERROR_MESSAGES.GENERIC);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGithubSignIn = async () => {
+    setIsGithubLoading(true);
+
+    try {
+      const { data, error } = await signIn.social({
+        provider: "github",
+      });
+
+      if (error) {
+        toast.error(error.message || ERROR_MESSAGES.GENERIC);
+        return;
+      }
+
+      if (data?.redirect && data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Erreur de connexion GitHub:", error);
+      toast.error(ERROR_MESSAGES.GENERIC);
+    } finally {
+      setIsGithubLoading(false);
+    }
+  };
+
   return (
     <Card className="w-full border-0 shadow-none">
       <CardHeader className="space-y-1 px-0">
@@ -111,68 +169,108 @@ export function SignInForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              rules={{
-                required: "L'email est requis",
-              }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="vous@exemple.com"
-                      {...field}
-                      disabled={isLoading}
-                      autoComplete="email"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              rules={{
-                required: "Le mot de passe est requis",
-              }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mot de passe</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      {...field}
-                      disabled={isLoading}
-                      autoComplete="current-password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Mot de passe oublié ?
-              </Link>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Connexion en cours..." : "Se connecter"}
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading || isGoogleLoading}
+            >
+              {isGoogleLoading
+                ? "Connexion Google en cours..."
+                : "Continuer avec Google"}
             </Button>
-          </form>
-        </Form>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGithubSignIn}
+              disabled={isLoading || isGithubLoading}
+            >
+              {isGithubLoading
+                ? "Connexion GitHub en cours..."
+                : "Continuer avec GitHub"}
+            </Button>
+          </div>
+
+          <div className="relative">
+            <div
+              className="absolute inset-0 flex items-center"
+              aria-hidden="true"
+            >
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase text-muted-foreground">
+              <span className="bg-background px-2">Ou avec votre email</span>
+            </div>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                rules={{
+                  required: "L'email est requis",
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="vous@exemple.com"
+                        {...field}
+                        disabled={isLoading}
+                        autoComplete="email"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                rules={{
+                  required: "Le mot de passe est requis",
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mot de passe</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                        disabled={isLoading}
+                        autoComplete="current-password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Mot de passe oublié ?
+                </Link>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Connexion en cours..." : "Se connecter"}
+              </Button>
+            </form>
+          </Form>
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col space-y-2 px-0">
         <div className="text-sm text-center text-muted-foreground">

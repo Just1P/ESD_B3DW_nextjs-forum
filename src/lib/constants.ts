@@ -1,10 +1,4 @@
-/**
- * Constantes de l'application
- */
 
-/**
- * Messages de succès
- */
 export const SUCCESS_MESSAGES = {
   SIGN_IN: "Connexion réussie !",
   SIGN_UP: "Inscription réussie !",
@@ -21,9 +15,6 @@ export const SUCCESS_MESSAGES = {
   ADMIN_ROLE_UPDATED: "Rôle utilisateur mis à jour",
 } as const;
 
-/**
- * Messages d'erreur
- */
 export const ERROR_MESSAGES = {
   GENERIC: "Une erreur est survenue. Veuillez réessayer.",
   NETWORK: "Erreur de connexion. Vérifiez votre connexion internet.",
@@ -31,19 +22,16 @@ export const ERROR_MESSAGES = {
   FORBIDDEN: "Vous n'avez pas les permissions nécessaires",
   NOT_FOUND: "Ressource non trouvée",
 
-  // Auth
   INVALID_CREDENTIALS: "Email ou mot de passe incorrect",
   EMAIL_NOT_FOUND: "Aucun compte trouvé avec cet email",
   EMAIL_ALREADY_EXISTS: "Cette adresse email est déjà utilisée",
   INVALID_TOKEN: "Token invalide ou expiré",
 
-  // Validation
   REQUIRED_FIELD: "Ce champ est requis",
   INVALID_EMAIL: "Format d'email invalide",
   PASSWORD_TOO_SHORT: "Le mot de passe doit contenir au moins 8 caractères",
   PASSWORDS_DONT_MATCH: "Les mots de passe ne correspondent pas",
 
-  // Operations
   CONVERSATION_CREATE_FAILED: "Échec de la création de la conversation",
   CONVERSATION_FETCH_FAILED: "Échec de la récupération de la conversation",
   CONVERSATION_DELETE_FAILED: "Échec de la suppression de la conversation",
@@ -57,9 +45,6 @@ export const ERROR_MESSAGES = {
     "Impossible de mettre à jour le rôle de l'utilisateur",
 } as const;
 
-/**
- * Paramètres de validation
- */
 export const VALIDATION = {
   PASSWORD: {
     MIN_LENGTH: 8,
@@ -88,9 +73,6 @@ export const VALIDATION = {
   },
 } as const;
 
-/**
- * Routes de l'application
- */
 export const ROUTES = {
   HOME: "/",
   SIGN_IN: "/signin",
@@ -101,9 +83,6 @@ export const ROUTES = {
   USER_PROFILE: (id: string) => `/users/${id}`,
 } as const;
 
-/**
- * Clés React Query
- */
 export const QUERY_KEYS = {
   SESSION: ["session"],
   CONVERSATIONS: ["conversations"],
@@ -114,9 +93,6 @@ export const QUERY_KEYS = {
   CURRENT_USER: ["currentUser"],
 } as const;
 
-/**
- * Durées (en millisecondes)
- */
 export const DURATIONS = {
   TOAST: 3000,
   DEBOUNCE: 300,

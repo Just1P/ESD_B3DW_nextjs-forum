@@ -23,10 +23,6 @@ const sizeClasses = {
   xl: "h-24 w-24 text-2xl",
 };
 
-/**
- * Composant réutilisable pour afficher l'avatar d'un utilisateur
- * Peut être cliquable et rediriger vers le profil de l'utilisateur
- */
 export function UserAvatar({
   user,
   size = "md",

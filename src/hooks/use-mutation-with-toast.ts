@@ -19,16 +19,6 @@ interface MutationWithToastOptions<TData, TVariables, TError = Error>
   onError?: (error: TError, variables: TVariables) => void;
 }
 
-/**
- * Hook personnalisé pour les mutations avec gestion automatique des toasts et invalidation du cache
- *
- * @example
- * const mutation = useMutationWithToast({
- *   mutationFn: updateProfile,
- *   successMessage: "Profil mis à jour !",
- *   invalidateQueries: ["profile"],
- * });
- */
 export function useMutationWithToast<
   TData = unknown,
   TVariables = void,
@@ -46,12 +36,10 @@ export function useMutationWithToast<
   return useMutation<TData, TError, TVariables>({
     ...options,
     onSuccess: async (data, variables) => {
-      // Afficher le toast de succès
       if (successMessage) {
         toast.success(successMessage);
       }
 
-      // Invalider les requêtes spécifiées
       if (invalidateQueries) {
         const isNestedArray =
           Array.isArray(invalidateQueries) &&
@@ -69,19 +57,16 @@ export function useMutationWithToast<
         );
       }
 
-      // Appeler le callback personnalisé
       if (customOnSuccess) {
         await customOnSuccess(data, variables);
       }
     },
     onError: (error, variables) => {
-      // Afficher le toast d'erreur
       const message =
         errorMessage ||
         (error instanceof Error ? error.message : "Une erreur est survenue");
       toast.error(message);
 
-      // Appeler le callback personnalisé
       if (customOnError) {
         customOnError(error, variables);
       }

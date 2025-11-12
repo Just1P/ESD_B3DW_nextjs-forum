@@ -26,7 +26,6 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFileName, setOriginalFileName] = useState<string>("");
 
-  // Synchroniser previewUrl avec la prop value quand elle change
   useEffect(() => {
     setPreviewUrl(value);
   }, [value]);
@@ -38,7 +37,6 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
     setUploadedFiles([file]);
     setOriginalFileName(file.name);
 
-    // Créer une URL locale pour le recadrage
     const localPreview = URL.createObjectURL(file);
     setImageToCrop(localPreview);
     setCropDialogOpen(true);
