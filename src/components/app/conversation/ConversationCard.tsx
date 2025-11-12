@@ -36,11 +36,11 @@ export default function ConversationCard({
             {/* Info auteur et date */}
             <div className="flex items-center gap-2 mb-2">
               <Avatar className="h-5 w-5">
-                <AvatarImage src={conversation.author?.image || undefined} />
+              <AvatarImage src={conversation.author?.image || undefined} />
                 <AvatarFallback className="text-[10px]">
-                  {authorInitials}
-                </AvatarFallback>
-              </Avatar>
+                {authorInitials}
+              </AvatarFallback>
+            </Avatar>
               <span className="text-xs text-gray-600">
                 Posté par <span className="font-medium hover:underline">{authorName}</span>
               </span>
@@ -62,10 +62,10 @@ export default function ConversationCard({
                 <span className="font-medium">
                   {conversation?.messages.length}{" "}
                   {conversation?.messages.length <= 1 ? "réponse" : "réponses"}
-                </span>
-              </div>
+              </span>
             </div>
-          </Link>
+          </div>
+    </Link>
         </div>
       </div>
     </div>

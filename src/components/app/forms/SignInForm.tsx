@@ -165,6 +165,15 @@ export function SignInForm() {
               )}
             />
 
+            <div className="flex justify-end">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
+                Mot de passe oublié ?
+              </Link>
+            </div>
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Connexion en cours..." : "Se connecter"}
             </Button>

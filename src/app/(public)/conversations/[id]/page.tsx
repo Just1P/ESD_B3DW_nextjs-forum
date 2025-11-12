@@ -25,8 +25,8 @@ export default async function ConversationDetailPage({
         <div className="mb-4">
           <Link href="/" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors">
             <span className="mr-1">←</span> Retour aux conversations
-          </Link>
-        </div>
+        </Link>
+      </div>
 
         {/* Post principal - style Reddit */}
         <div className="bg-white border border-gray-200 rounded-md mb-4 overflow-hidden">
@@ -46,16 +46,16 @@ export default async function ConversationDetailPage({
               </div>
             </div>
           </div>
-        </div>
+      </div>
 
         {/* Formulaire de réponse */}
         <div className="mb-4">
-          <MessageForm conversationId={id} />
-        </div>
+        <MessageForm conversationId={id} />
+      </div>
 
         {/* Liste des messages/commentaires */}
-        <div>
-          <MessageList conversationId={id} />
+      <div>
+        <MessageList conversationId={id} />
         </div>
       </div>
     </div>
