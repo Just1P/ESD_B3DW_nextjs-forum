@@ -1,8 +1,10 @@
+import { AuthorInfo } from "@/components/app/common/AuthorInfo";
+import ConversationDeleteButton from "@/components/app/conversation/ConversationDeleteButton";
 import VoteButtons from "@/components/app/conversation/VoteButtons";
 import MessageForm from "@/components/app/message/MessageForm";
 import MessageList from "@/components/app/message/MessageList";
-import Link from "next/link";
 import { env } from "@/lib/env";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -43,25 +45,23 @@ export default async function ConversationDetailPage({
             />
 
             <div className="flex-1 p-6">
-              <h1 className="text-2xl font-semibold text-gray-900 mb-3">
-                {conversation?.title}
-              </h1>
-              <div className="text-xs text-gray-500 flex items-center gap-2">
-                <span>Discussion</span>
-                {conversation.author && (
-                  <>
-                    <span>•</span>
-                    <span>
-                      Créée par{" "}
-                      <Link
-                        href={`/users/${conversation.author.id}`}
-                        className="font-medium hover:underline text-gray-700"
-                      >
-                        {conversation.author.name || "Utilisateur"}
-                      </Link>
-                    </span>
-                  </>
-                )}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 mb-3">
+                    {conversation?.title}
+                  </h1>
+                  <AuthorInfo
+                    author={conversation.author}
+                    createdAt={conversation.createdAt}
+                    withLink
+                    prefix="Discussion créée par"
+                    showEdited={false}
+                  />
+                </div>
+                <ConversationDeleteButton
+                  id={conversation.id}
+                  authorId={conversation.author?.id}
+                />
               </div>
             </div>
           </div>

@@ -1,12 +1,17 @@
+'use client';
+
+import { Role } from "@/generated/prisma";
 import { formatDistanceToNow } from "@/lib/date";
 import { getDisplayName } from "@/lib/user-utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { RoleBadge } from "./RoleBadge";
 
 interface Author {
   id: string;
   name: string | null;
   image: string | null;
+  role?: Role;
 }
 
 interface AuthorInfoProps {
@@ -17,6 +22,7 @@ interface AuthorInfoProps {
   prefix?: string;
   className?: string;
   showEdited?: boolean;
+  showRoleBadge?: boolean;
 }
 
 /**
@@ -31,12 +37,14 @@ export function AuthorInfo({
   prefix = "Posté par",
   className,
   showEdited = true,
+  showRoleBadge = false,
 }: AuthorInfoProps) {
   const displayName = getDisplayName(author);
   const isEdited =
     showEdited &&
     updatedAt &&
     new Date(updatedAt).getTime() !== new Date(createdAt).getTime();
+  const role = author?.role;
 
   return (
     <div
@@ -59,6 +67,13 @@ export function AuthorInfo({
       <span className="text-gray-400">•</span>
 
       <span className="text-gray-500">{formatDistanceToNow(createdAt)}</span>
+
+      {showRoleBadge && role && (
+        <>
+          <span className="text-gray-400">•</span>
+          <RoleBadge role={role} />
+        </>
+      )}
 
       {isEdited && (
         <>

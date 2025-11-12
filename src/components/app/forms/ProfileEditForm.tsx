@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Role } from "@/generated/prisma";
 import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
 import { updateUser, useSession } from "@/lib/auth-client";
 import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
@@ -31,6 +32,7 @@ type SessionUser = {
   image?: string | null;
   bio?: string | null;
   createdAt?: Date;
+  role: Role;
 };
 
 export function ProfileEditForm() {

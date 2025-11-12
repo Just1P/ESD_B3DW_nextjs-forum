@@ -10,6 +10,7 @@ export const userService = {
         name: true,
         image: true,
         bio: true,
+        role: true,
       },
     });
 
@@ -32,6 +33,7 @@ export const userService = {
         name: true,
         image: true,
         bio: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -51,6 +53,7 @@ export const userService = {
         name: true,
         image: true,
         bio: true,
+        role: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -74,6 +77,7 @@ export const userService = {
         name: true,
         image: true,
         bio: true,
+        role: true,
         createdAt: true,
         conversations: {
           select: {

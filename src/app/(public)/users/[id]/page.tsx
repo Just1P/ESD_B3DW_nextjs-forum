@@ -1,3 +1,4 @@
+import { RoleBadge } from "@/components/app/common/RoleBadge";
 import { UserAvatar } from "@/components/app/common/UserAvatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { env } from "@/lib/env";
@@ -45,9 +46,12 @@ export default async function UserProfilePage({
             <div className="flex items-start gap-6">
               <UserAvatar user={user} size="xl" />
               <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {user.name || "Utilisateur anonyme"}
-                </h1>
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {user.name || "Utilisateur anonyme"}
+                  </h1>
+                  <RoleBadge role={user.role} withDescription />
+                </div>
                 {user.bio && <p className="text-gray-600 mb-4">{user.bio}</p>}
                 <div className="flex gap-6 text-sm text-gray-500">
                   <div>

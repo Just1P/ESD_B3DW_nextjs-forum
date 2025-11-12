@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { ROLE_VALUES } from "./roles";
 import { sendPasswordResetEmail } from "./email";
 import { env } from "./env";
 import { prisma } from "./prisma";
@@ -24,6 +25,12 @@ export const auth = betterAuth({
       bio: {
         type: "string",
         required: false,
+      },
+      role: {
+        type: "string",
+        required: true,
+        defaultValue: "USER",
+        enum: ROLE_VALUES,
       },
     },
   },

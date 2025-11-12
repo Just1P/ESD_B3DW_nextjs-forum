@@ -1,9 +1,12 @@
+import type { Role } from "@/generated/prisma";
+
 export type User = {
   id: string;
   email: string;
   name: string | null;
   image: string | null;
   bio: string | null;
+  role: Role;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -14,12 +17,14 @@ export type CreateUserInput = {
   name?: string;
   image?: string;
   bio?: string;
+  role?: Role;
 };
 
 export type UpdateUserInput = {
   name?: string;
   image?: string;
   bio?: string;
+  role?: Role;
 };
 
 export type SignInCredentials = {
@@ -27,11 +32,11 @@ export type SignInCredentials = {
   password: string;
 };
 
-export type PublicUser = Pick<User, "id" | "name" | "image" | "bio">;
+export type PublicUser = Pick<User, "id" | "name" | "image" | "bio" | "role">;
 
 export type UserWithContributions = Pick<
   User,
-  "id" | "name" | "image" | "bio" | "createdAt"
+  "id" | "name" | "image" | "bio" | "createdAt" | "role"
 > & {
   conversations: Array<{
     id: string;

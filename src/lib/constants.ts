@@ -18,6 +18,7 @@ export const SUCCESS_MESSAGES = {
   IMAGE_UPLOADED: "Image uploadée avec succès !",
   PASSWORD_RESET_EMAIL_SENT: "Email de réinitialisation envoyé !",
   PASSWORD_RESET: "Mot de passe réinitialisé avec succès !",
+  ADMIN_ROLE_UPDATED: "Rôle utilisateur mis à jour",
 } as const;
 
 /**
@@ -52,6 +53,8 @@ export const ERROR_MESSAGES = {
   VOTE_FAILED: "Erreur lors du vote",
   IMAGE_UPLOAD_FAILED: "Erreur lors de l'upload de l'image",
   PROFILE_UPDATE_FAILED: "Erreur lors de la mise à jour du profil",
+  ADMIN_ROLE_UPDATE_FAILED:
+    "Impossible de mettre à jour le rôle de l'utilisateur",
 } as const;
 
 /**

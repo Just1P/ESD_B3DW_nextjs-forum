@@ -10,12 +10,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "@/lib/auth-client";
+import type { AuthenticatedUser } from "@/lib/session";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { UserAvatar } from "./UserAvatar";
+import { RoleBadge } from "./RoleBadge";
 
 export function Header() {
   const router = useRouter();
@@ -40,6 +42,12 @@ export function Header() {
           <Button variant="ghost" size="sm" asChild className="h-8">
             <Link href="/">Accueil</Link>
           </Button>
+          {session?.user &&
+            (session.user as AuthenticatedUser).role === "ADMIN" && (
+              <Button variant="ghost" size="sm" asChild className="h-8">
+                <Link href="/admin">Admin</Link>
+              </Button>
+            )}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -68,6 +76,11 @@ export function Header() {
                     <p className="text-xs leading-none text-muted-foreground">
                       {session.user.email}
                     </p>
+                    {"role" in session.user && session.user.role ? (
+                      <RoleBadge
+                        role={(session.user as AuthenticatedUser).role}
+                      />
+                    ) : null}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

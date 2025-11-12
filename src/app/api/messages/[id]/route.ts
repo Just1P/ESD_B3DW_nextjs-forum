@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { canModerateContent, isAdmin } from "@/lib/roles";
 import { requireAuth } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -33,7 +34,10 @@ export async function PATCH(
       );
     }
 
-    if (message.userId !== user.id) {
+    const isOwner = message.userId === user.id;
+    const isAdminUser = isAdmin(user.role);
+
+    if (!isOwner && !isAdminUser) {
       return NextResponse.json(
         { error: "Vous n'êtes pas autorisé à modifier ce message" },
         { status: 403 }
@@ -60,6 +64,7 @@ export async function PATCH(
             name: true,
             email: true,
             image: true,
+            role: true,
           },
         },
       },
@@ -105,7 +110,10 @@ export async function DELETE(
       );
     }
 
-    if (message.userId !== user.id) {
+    const isOwner = message.userId === user.id;
+    const canModerate = canModerateContent(user.role);
+
+    if (!isOwner && !canModerate) {
       return NextResponse.json(
         { error: "Vous n'êtes pas autorisé à supprimer ce message" },
         { status: 403 }

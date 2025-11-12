@@ -1,9 +1,11 @@
 "use client";
 
+import { RoleBadge } from "@/components/app/common/RoleBadge";
 import { ProfileEditForm } from "@/components/app/forms";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "@/lib/auth-client";
-import { Calendar, Mail, User } from "lucide-react";
+import type { AuthenticatedUser } from "@/lib/session";
+import { Calendar, Mail, ShieldCheck, User } from "lucide-react";
 
 export default function AccountPage() {
   const { data: session, isPending } = useSession();
@@ -20,7 +22,7 @@ export default function AccountPage() {
     return null;
   }
 
-  const user = session.user;
+  const user = session.user as AuthenticatedUser;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,6 +41,13 @@ export default function AccountPage() {
               Informations du compte
             </h2>
             <div className="space-y-3 text-sm">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="h-4 w-4 text-gray-400 mt-0.5" />
+                <div>
+                  <p className="text-gray-500">Rôle</p>
+                  <RoleBadge role={user.role} withDescription />
+                </div>
+              </div>
               <div className="flex items-start gap-3">
                 <Mail className="h-4 w-4 text-gray-400 mt-0.5" />
                 <div>
