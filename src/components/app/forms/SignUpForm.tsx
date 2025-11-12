@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signUp } from "@/lib/auth-client";
+import { validateEmail, validatePassword, validatePasswordMatch } from "@/lib/validation";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -45,27 +47,6 @@ export function SignUpForm() {
     },
   });
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    if (password.length < 8) {
-      return "Le mot de passe doit contenir au moins 8 caractères";
-    }
-    if (!/[A-Z]/.test(password)) {
-      return "Le mot de passe doit contenir au moins une majuscule";
-    }
-    if (!/[a-z]/.test(password)) {
-      return "Le mot de passe doit contenir au moins une minuscule";
-    }
-    if (!/[0-9]/.test(password)) {
-      return "Le mot de passe doit contenir au moins un chiffre";
-    }
-    return true;
-  };
-
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
 
@@ -73,7 +54,7 @@ export function SignUpForm() {
       if (!validateEmail(data.email)) {
         form.setError("email", {
           type: "manual",
-          message: "Format d'email invalide",
+          message: ERROR_MESSAGES.INVALID_EMAIL,
         });
         setIsLoading(false);
         return;
@@ -89,10 +70,11 @@ export function SignUpForm() {
         return;
       }
 
-      if (data.password !== data.confirmPassword) {
+      const matchValidation = validatePasswordMatch(data.password, data.confirmPassword);
+      if (matchValidation !== true) {
         form.setError("confirmPassword", {
           type: "manual",
-          message: "Les mots de passe ne correspondent pas",
+          message: matchValidation,
         });
         setIsLoading(false);
         return;
@@ -112,23 +94,20 @@ export function SignUpForm() {
         ) {
           form.setError("email", {
             type: "manual",
-            message: "Cette adresse email est déjà utilisée",
+            message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
           });
-          toast.error("Cette adresse email est déjà utilisée");
+          toast.error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
         } else {
-          toast.error(
-            result.error.message ||
-              "Une erreur est survenue lors de l'inscription"
-          );
+          toast.error(result.error.message || ERROR_MESSAGES.GENERIC);
         }
       } else {
-        toast.success("Inscription réussie !");
+        toast.success(SUCCESS_MESSAGES.SIGN_UP);
         router.push("/");
         router.refresh();
       }
     } catch (error) {
       console.error("Erreur d'inscription:", error);
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      toast.error(ERROR_MESSAGES.GENERIC);
     } finally {
       setIsLoading(false);
     }

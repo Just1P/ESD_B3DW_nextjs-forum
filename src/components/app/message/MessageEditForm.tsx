@@ -3,11 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { SUCCESS_MESSAGES, ERROR_MESSAGES, QUERY_KEYS } from "@/lib/constants";
+import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
 import MessageService from "@/services/message.service";
 import { UpdateMessageDTO } from "@/types/message.type";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 interface MessageEditFormProps {
   messageId: string;
@@ -25,19 +25,17 @@ export default function MessageEditForm({
       content: currentContent,
     },
   });
-  const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: async (data: UpdateMessageDTO) => {
-      await MessageService.updateMessage(messageId, data);
-    },
+  const mutation = useMutationWithToast({
+    mutationFn: (data: UpdateMessageDTO) =>
+      MessageService.updateMessage(messageId, data),
+    successMessage: SUCCESS_MESSAGES.MESSAGE_UPDATED,
+    errorMessage: ERROR_MESSAGES.MESSAGE_UPDATE_FAILED,
+    invalidateQueries: QUERY_KEYS.MESSAGES,
     onSuccess: () => {
-      toast.success("Message modifié avec succès !");
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
       onCancel();
     },
     onError: (error) => {
-      toast.error("Erreur lors de la modification du message");
       console.error(error);
     },
   });

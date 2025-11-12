@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
 import { updateUser, useSession } from "@/lib/auth-client";
-import { useMutation } from "@tanstack/react-query";
+import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
 
 type ProfileFormData = {
@@ -51,7 +51,7 @@ export function ProfileEditForm() {
     },
   });
 
-  const updateProfileMutation = useMutation({
+  const updateProfileMutation = useMutationWithToast({
     mutationFn: async (data: ProfileFormData) => {
       const result = await updateUser({
         name: data.name,
@@ -60,11 +60,10 @@ export function ProfileEditForm() {
 
       if (!result.data) {
         throw new Error(
-          result.error?.message || "Erreur lors de la mise à jour"
+          result.error?.message || ERROR_MESSAGES.PROFILE_UPDATE_FAILED
         );
       }
 
-      // Mise à jour de la bio via l'API personnalisée car Better Auth ne gère pas ce champ
       if (data.bio !== undefined) {
         const response = await fetch("/api/user/me/update", {
           method: "PATCH",
@@ -76,20 +75,14 @@ export function ProfileEditForm() {
 
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(
-            error.error || "Erreur lors de la mise à jour de la bio"
-          );
+          throw new Error(error.error || ERROR_MESSAGES.PROFILE_UPDATE_FAILED);
         }
       }
 
       return result.data;
     },
-    onSuccess: () => {
-      toast.success("Profil mis à jour avec succès");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
+    successMessage: SUCCESS_MESSAGES.PROFILE_UPDATED,
+    invalidateQueries: QUERY_KEYS.SESSION,
   });
 
   const onSubmit = (data: ProfileFormData) => {

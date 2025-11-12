@@ -3,30 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
+import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
 import ConversationService from "@/services/conversation.service";
 import { ConversationDTO } from "@/types/conversation.type";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 export default function ConversationForm() {
   const { register, handleSubmit, watch, reset } = useForm<ConversationDTO>();
-  const queryClient = useQueryClient();
   const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: async (data: ConversationDTO) => {
-      return await ConversationService.createConversation(data);
-    },
+  const mutation = useMutationWithToast({
+    mutationFn: (data: ConversationDTO) =>
+      ConversationService.createConversation(data),
+    successMessage: SUCCESS_MESSAGES.CONVERSATION_CREATED,
+    errorMessage: ERROR_MESSAGES.CONVERSATION_CREATE_FAILED,
+    invalidateQueries: QUERY_KEYS.CONVERSATIONS,
     onSuccess: (data) => {
       reset();
-      toast.success("Conversation créée avec succès !");
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
       router.push(`/conversations/${data.id}`);
     },
     onError: (error) => {
-      toast.error("Erreur lors de la création de la conversation");
       console.error(error);
     },
   });

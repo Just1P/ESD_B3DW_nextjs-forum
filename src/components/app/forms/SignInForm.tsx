@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth-client";
+import { validateEmail } from "@/lib/validation";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -41,11 +43,6 @@ export function SignInForm() {
     },
   });
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
 
@@ -53,7 +50,7 @@ export function SignInForm() {
       if (!validateEmail(data.email)) {
         form.setError("email", {
           type: "manual",
-          message: "Format d'email invalide",
+          message: ERROR_MESSAGES.INVALID_EMAIL,
         });
         setIsLoading(false);
         return;
@@ -76,7 +73,7 @@ export function SignInForm() {
             type: "manual",
             message: "Mot de passe incorrect",
           });
-          toast.error("Email ou mot de passe incorrect");
+          toast.error(ERROR_MESSAGES.INVALID_CREDENTIALS);
         } else if (
           errorMessage.includes("not found") ||
           errorMessage.includes("doesn't exist") ||
@@ -84,23 +81,20 @@ export function SignInForm() {
         ) {
           form.setError("email", {
             type: "manual",
-            message: "Aucun compte trouvé avec cet email",
+            message: ERROR_MESSAGES.EMAIL_NOT_FOUND,
           });
-          toast.error("Aucun compte trouvé avec cet email");
+          toast.error(ERROR_MESSAGES.EMAIL_NOT_FOUND);
         } else {
-          toast.error(
-            result.error.message ||
-              "Une erreur est survenue lors de la connexion"
-          );
+          toast.error(result.error.message || ERROR_MESSAGES.GENERIC);
         }
       } else {
-        toast.success("Connexion réussie !");
+        toast.success(SUCCESS_MESSAGES.SIGN_IN);
         router.push("/");
         router.refresh();
       }
     } catch (error) {
       console.error("Erreur de connexion:", error);
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      toast.error(ERROR_MESSAGES.GENERIC);
     } finally {
       setIsLoading(false);
     }

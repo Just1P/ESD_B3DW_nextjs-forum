@@ -2,6 +2,7 @@ import VoteButtons from "@/components/app/conversation/VoteButtons";
 import MessageForm from "@/components/app/message/MessageForm";
 import MessageList from "@/components/app/message/MessageList";
 import Link from "next/link";
+import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function ConversationDetailPage({
   const { id } = await params;
 
   console.log("ID de la conversation:", id);
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl = env.appUrl;
   const response = await fetch(`${baseUrl}/api/conversations/${id}`, {
     cache: "no-store",
   });

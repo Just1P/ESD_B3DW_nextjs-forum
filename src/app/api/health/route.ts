@@ -1,14 +1,15 @@
+import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   const checks = {
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
+    environment: env.nodeEnv,
     checks: {
       database_url: !!process.env.DATABASE_URL,
       better_auth_secret: !!process.env.BETTER_AUTH_SECRET,
-      next_public_app_url: !!process.env.NEXT_PUBLIC_APP_URL,
+      next_public_app_url: env.hasAppUrlEnv,
       blob_token: !!process.env.BLOB_READ_WRITE_TOKEN,
       resend_api_key: !!process.env.RESEND_API_KEY,
     },

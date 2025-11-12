@@ -1,5 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/app/common/UserAvatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { env } from "@/lib/env";
 import { formatDistanceToNow } from "@/lib/date";
 import { UserWithContributions } from "@/types/user.type";
 import Link from "next/link";
@@ -16,7 +17,7 @@ export default async function UserProfilePage({
 }: UserProfilePageProps) {
   const { id } = await params;
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl = env.appUrl;
   const response = await fetch(`${baseUrl}/api/user/${id}`, {
     cache: "no-store",
   });
@@ -42,15 +43,7 @@ export default async function UserProfilePage({
         <Card className="mb-6">
           <CardContent className="pt-6">
             <div className="flex items-start gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarImage 
-                  src={user.image || undefined}
-                  key={user.image || 'default'}
-                />
-                <AvatarFallback className="text-2xl">
-                  {user.name?.charAt(0).toUpperCase() || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar user={user} size="xl" />
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {user.name || "Utilisateur anonyme"}
