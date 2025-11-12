@@ -2,30 +2,29 @@
 
 import { UserAvatar } from "@/components/app/common/UserAvatar";
 import { AuthorInfo } from "@/components/app/common/AuthorInfo";
-import { Button } from "@/components/ui/button";
-import { Message } from "@/generated/prisma";
 import { useSession } from "@/lib/auth-client";
-import MessageService from "@/services/message.service";
+import { canModerateContent, isAdmin } from "@/lib/roles";
+import type { AuthenticatedUser } from "@/lib/session";
+import MessageService, { type MessageWithAuthor } from "@/services/message.service";
+import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import DeleteButton from "../common/DeleteButton";
 import MessageEditForm from "./MessageEditForm";
 
 interface MessageItemProps {
-  message: Message & {
-    author?: {
-      id: string;
-      name: string | null;
-      email: string;
-      image: string | null;
-    } | null;
-  };
+  message: MessageWithAuthor;
 }
 
 export default function MessageItem({ message }: MessageItemProps) {
   const { data: session } = useSession();
+  const sessionUser = session?.user as AuthenticatedUser | undefined;
   const [isEditing, setIsEditing] = useState(false);
-  const isAuthor = session?.user?.id === message.author?.id;
+  const isAuthor = sessionUser?.id === message.author?.id;
+  const isAdminUser = isAdmin(sessionUser?.role);
+  const canModerate = canModerateContent(sessionUser?.role);
+  const canEdit = isAuthor || isAdminUser;
+  const canDelete = isAuthor || canModerate;
 
   return (
     <div className="bg-white border-l-2 border-transparent hover:border-gray-300 transition-colors">
@@ -62,23 +61,27 @@ export default function MessageItem({ message }: MessageItemProps) {
             </p>
           )}
 
-          {isAuthor && !isEditing && (
+          {!isEditing && (canEdit || canDelete) && (
             <div className="flex items-center gap-2 mt-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-                className="h-7 px-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-              >
-                <Pencil className="h-3 w-3 mr-1" />
-                Modifier
-              </Button>
-              <DeleteButton
-                entityName="Message"
-                queryKey="messages"
-                onDelete={MessageService.deleteById}
-                id={message.id}
-              />
+              {canEdit && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="h-7 px-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                >
+                  <Pencil className="h-3 w-3 mr-1" />
+                  Modifier
+                </Button>
+              )}
+              {canDelete && (
+                <DeleteButton
+                  entityName="Message"
+                  queryKey="messages"
+                  onDelete={MessageService.deleteById}
+                  id={message.id}
+                />
+              )}
             </div>
           )}
         </div>

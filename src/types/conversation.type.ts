@@ -1,4 +1,4 @@
-import { Conversation, Message, VoteType } from "@/generated/prisma";
+import { Conversation, Message, Role, VoteType } from "@/generated/prisma";
 
 export interface ConversationWithExtend extends Conversation {
   messages: Message[];
@@ -7,6 +7,7 @@ export interface ConversationWithExtend extends Conversation {
     name: string | null;
     email: string;
     image: string | null;
+    role: Role;
   } | null;
   _count?: {
     votes: number;

@@ -56,6 +56,7 @@ model User {
   name  String?
   image String?
   bio   String?
+  role  Role    @default(USER)
 
   conversations Conversation[]
   messages      Message[]
@@ -133,4 +134,10 @@ model Vote {
 
   @@unique([userId, conversationId])
   @@map("vote")
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  USER
 }

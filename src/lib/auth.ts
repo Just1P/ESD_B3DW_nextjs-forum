@@ -25,6 +25,12 @@ export const auth = betterAuth({
         type: "string",
         required: false,
       },
+      role: {
+        type: "string",
+        required: true,
+        defaultValue: "USER",
+        enum: ["ADMIN", "MODERATOR", "USER"],
+      },
     },
   },
   secret: process.env.BETTER_AUTH_SECRET,

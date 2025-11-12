@@ -1,5 +1,6 @@
 import { UserAvatar } from "@/components/app/common/UserAvatar";
 import { AuthorInfo } from "@/components/app/common/AuthorInfo";
+import ConversationDeleteButton from "@/components/app/conversation/ConversationDeleteButton";
 import { ConversationWithExtend } from "@/types/conversation.type";
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
@@ -24,17 +25,24 @@ export default function ConversationCard({
 
         <div className="flex-1 p-3">
           <div className="block">
-            <div className="flex items-center gap-2 mb-2">
-              <UserAvatar 
-                user={conversation.author}
-                size="xs"
-                withLink
-              />
-              <AuthorInfo 
-                author={conversation.author}
-                createdAt={conversation.createdAt}
-                withLink
-                prefix="Posté par"
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <UserAvatar 
+                  user={conversation.author}
+                  size="xs"
+                  withLink
+                />
+                <AuthorInfo 
+                  author={conversation.author}
+                  createdAt={conversation.createdAt}
+                  withLink
+                  prefix="Posté par"
+                />
+              </div>
+              <ConversationDeleteButton
+                id={conversation.id}
+                authorId={conversation.author?.id || null}
+                className="text-xs"
               />
             </div>
 

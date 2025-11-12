@@ -10,12 +10,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "@/lib/auth-client";
+import type { AuthenticatedUser } from "@/lib/session";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { UserAvatar } from "./UserAvatar";
+import { RoleBadge } from "./RoleBadge";
 
 export function Header() {
   const router = useRouter();
@@ -68,6 +70,9 @@ export function Header() {
                     <p className="text-xs leading-none text-muted-foreground">
                       {session.user.email}
                     </p>
+                    <RoleBadge
+                      role={(session.user as AuthenticatedUser).role}
+                    />
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

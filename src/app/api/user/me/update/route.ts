@@ -11,6 +11,13 @@ export async function PATCH(request: Request) {
 
     const updateData: UpdateUserInput = {};
 
+    if (body.role !== undefined) {
+      return NextResponse.json(
+        { error: "La modification du rôle n'est pas autorisée depuis cette interface" },
+        { status: 403 }
+      );
+    }
+
     if (body.name !== undefined) {
       if (typeof body.name !== "string" || body.name.trim().length === 0) {
         return NextResponse.json(

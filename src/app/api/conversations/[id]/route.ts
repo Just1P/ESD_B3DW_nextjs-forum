@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { canModerateContent } from "@/lib/roles";
 import { requireAuth, getCurrentUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 import { VoteType } from "@/generated/prisma";
@@ -19,6 +20,7 @@ export async function GET(
           name: true,
           email: true,
           image: true,
+          role: true,
         },
       },
       messages: {
@@ -91,7 +93,10 @@ export async function DELETE(
       );
     }
 
-    if (conversation.userId !== user.id) {
+    const isOwner = conversation.userId === user.id;
+    const canModerate = canModerateContent(user.role);
+
+    if (!isOwner && !canModerate) {
       return NextResponse.json(
         { error: "Vous n'êtes pas autorisé à supprimer cette conversation" },
         { status: 403 }

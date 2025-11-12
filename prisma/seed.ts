@@ -20,6 +20,7 @@ async function main() {
       name: "Justin",
       email: "justin.pitra@gmail.com",
       emailVerified: true,
+      role: "ADMIN",
     },
   });
 
