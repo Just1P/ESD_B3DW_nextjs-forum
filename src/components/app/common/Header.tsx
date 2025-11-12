@@ -64,6 +64,7 @@ export function Header() {
                     <AvatarImage
                       src={session.user.image || undefined}
                       alt={session.user.name || "Avatar"}
+                      key={session.user.image || 'default'}
                     />
                     <AvatarFallback className="text-xs">
                       {session.user.name

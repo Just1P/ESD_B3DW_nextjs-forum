@@ -43,7 +43,10 @@ export default function MessageItem({ message }: MessageItemProps) {
           {message.author ? (
             <Link href={`/users/${message.author.id}`}>
               <Avatar className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity">
-                <AvatarImage src={message.author?.image || undefined} />
+                <AvatarImage
+                  src={message.author?.image || undefined}
+                  key={message.author?.image || "default"}
+                />
                 <AvatarFallback className="text-xs">
                   {authorInitials}
                 </AvatarFallback>

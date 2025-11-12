@@ -43,7 +43,10 @@ export default async function UserProfilePage({
           <CardContent className="pt-6">
             <div className="flex items-start gap-6">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={user.image || undefined} />
+                <AvatarImage 
+                  src={user.image || undefined}
+                  key={user.image || 'default'}
+                />
                 <AvatarFallback className="text-2xl">
                   {user.name?.charAt(0).toUpperCase() || "U"}
                 </AvatarFallback>

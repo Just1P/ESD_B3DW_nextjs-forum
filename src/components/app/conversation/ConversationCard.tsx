@@ -40,6 +40,7 @@ export default function ConversationCard({
                   <Avatar className="h-5 w-5 cursor-pointer hover:opacity-80 transition-opacity">
                     <AvatarImage
                       src={conversation.author?.image || undefined}
+                      key={conversation.author?.image || 'default'}
                     />
                     <AvatarFallback className="text-[10px]">
                       {authorInitials}

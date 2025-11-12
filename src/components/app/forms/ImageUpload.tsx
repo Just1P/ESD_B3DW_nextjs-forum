@@ -6,7 +6,7 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/shadcn-io/dropzone";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ImageCropDialog } from "./ImageCropDialog";
 
@@ -23,6 +23,11 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFileName, setOriginalFileName] = useState<string>("");
+
+  // Synchroniser previewUrl avec la prop value quand elle change
+  useEffect(() => {
+    setPreviewUrl(value);
+  }, [value]);
 
   const handleDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -98,7 +103,11 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   return (
     <div className="flex flex-col items-center gap-4">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={previewUrl || value || undefined} alt="Avatar" />
+        <AvatarImage
+          src={previewUrl || value || undefined}
+          alt="Avatar"
+          key={previewUrl || value || "default"}
+        />
         <AvatarFallback className="text-2xl">
           {getInitials(userName)}
         </AvatarFallback>
