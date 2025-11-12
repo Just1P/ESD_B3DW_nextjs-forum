@@ -120,3 +120,17 @@
     @apply bg-gray-50 text-foreground;
   }
 }
+
+.reactEasyCrop_Container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.reactEasyCrop_Image,
+.reactEasyCrop_Video {
+  user-select: none;
+  touch-action: none;
+}

@@ -4,6 +4,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.error("❌ BLOB_READ_WRITE_TOKEN n'est pas configuré");
+      return NextResponse.json(
+        {
+          error: "Service d'upload non configuré",
+          details: "Veuillez configurer Vercel Blob",
+        },
+        { status: 503 }
+      );
+    }
+
     const user = await requireAuth();
 
     const formData = await req.formData();
@@ -53,11 +64,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
 
-    console.error("Erreur lors de l'upload:", error);
+    console.error("❌ Erreur détaillée lors de l'upload:", error);
+
+    if (error instanceof Error) {
+      console.error("Message:", error.message);
+      console.error("Stack:", error.stack);
+    }
+
     return NextResponse.json(
       {
         error: "Erreur lors de l'upload",
         details: error instanceof Error ? error.message : "Erreur inconnue",
+        stack:
+          process.env.NODE_ENV === "development" && error instanceof Error
+            ? error.stack
+            : undefined,
       },
       { status: 500 }
     );

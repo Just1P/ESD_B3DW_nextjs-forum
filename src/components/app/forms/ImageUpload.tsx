@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/shadcn-io/dropzone";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ImageCropDialog } from "./ImageCropDialog";
 
 interface ImageUploadProps {
   value?: string;
@@ -19,22 +20,28 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(value);
   const [isUploading, setIsUploading] = useState(false);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [originalFileName, setOriginalFileName] = useState<string>("");
 
   const handleDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
     const file = acceptedFiles[0];
     setUploadedFiles([file]);
+    setOriginalFileName(file.name);
 
-    // Prévisualisation locale immédiate
+    // Créer une URL locale pour le recadrage
     const localPreview = URL.createObjectURL(file);
-    setPreviewUrl(localPreview);
+    setImageToCrop(localPreview);
+    setCropDialogOpen(true);
+  };
 
+  const handleCropComplete = async (croppedImage: Blob, fileName: string) => {
     setIsUploading(true);
     try {
-      // Upload vers Vercel Blob via l'API
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", croppedImage, fileName);
 
       const response = await fetch("/api/upload/image", {
         method: "POST",
@@ -43,17 +50,21 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Erreur lors de l'upload");
+        console.error("❌ Détails de l'erreur serveur:", errorData);
+        throw new Error(
+          errorData.details || errorData.error || "Erreur lors de l'upload"
+        );
       }
 
       const data = await response.json();
 
-      // Mettre à jour avec l'URL Vercel Blob
       onChange(data.url);
       setPreviewUrl(data.url);
 
-      // Nettoyer l'URL locale
-      URL.revokeObjectURL(localPreview);
+      if (imageToCrop) {
+        URL.revokeObjectURL(imageToCrop);
+        setImageToCrop(null);
+      }
 
       toast.success("Image uploadée avec succès !");
     } catch (error) {
@@ -65,8 +76,6 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
       );
       setPreviewUrl(value);
       setUploadedFiles([]);
-      // Nettoyer l'URL locale en cas d'erreur
-      URL.revokeObjectURL(localPreview);
     } finally {
       setIsUploading(false);
     }
@@ -89,7 +98,7 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   return (
     <div className="flex flex-col items-center gap-4">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={previewUrl || value} alt="Avatar" />
+        <AvatarImage src={previewUrl || value || undefined} alt="Avatar" />
         <AvatarFallback className="text-2xl">
           {getInitials(userName)}
         </AvatarFallback>
@@ -132,6 +141,16 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
           PNG, JPG ou WEBP. Max 5MB.
         </p>
       </div>
+
+      {imageToCrop && (
+        <ImageCropDialog
+          open={cropDialogOpen}
+          onOpenChange={setCropDialogOpen}
+          imageSrc={imageToCrop}
+          onCropComplete={handleCropComplete}
+          fileName={originalFileName}
+        />
+      )}
     </div>
   );
 }
