@@ -5,6 +5,7 @@ import { useSession } from "@/lib/auth-client";
 import { canModerateContent } from "@/lib/roles";
 import type { AuthenticatedUser } from "@/lib/session";
 import ConversationService from "@/services/conversation.service";
+import { cn } from "@/lib/utils";
 
 interface ConversationDeleteButtonProps {
   className?: string;
@@ -18,12 +19,21 @@ export default function ConversationDeleteButton({
   authorId,
 }: ConversationDeleteButtonProps) {
   const { data: session } = useSession();
-  const sessionUser = session?.user as AuthenticatedUser | undefined;
+  const sessionUser =
+    session?.user && "role" in session.user
+      ? (session.user as AuthenticatedUser)
+      : undefined;
   const isAuthor = sessionUser?.id === authorId;
   const canModerate = canModerateContent(sessionUser?.role);
 
   if (!isAuthor && !canModerate) {
-    return null;
+    return (
+      <span
+        className={cn("inline-flex", className)}
+        style={{ visibility: "hidden" }}
+        aria-hidden="true"
+      />
+    );
   }
 
   return (

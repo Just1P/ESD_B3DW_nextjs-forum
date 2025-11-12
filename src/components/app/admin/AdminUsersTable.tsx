@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Role } from "@/generated/prisma";
 import { RoleBadge } from "@/components/app/common/RoleBadge";
+import { Role } from "@/generated/prisma";
 import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
-import adminService from "@/services/admin.service";
-import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/lib/constants";
 import { formatDistanceToNow } from "@/lib/date";
+import { ROLE_LABELS, ROLE_VALUES } from "@/lib/roles";
 import { cn } from "@/lib/utils";
+import adminService from "@/services/admin.service";
+import { useState } from "react";
 
 interface AdminUser {
   id: string;
@@ -24,7 +25,7 @@ interface AdminUsersTableProps {
   currentAdminId: string;
 }
 
-const ROLE_OPTIONS: Role[] = ["ADMIN", "MODERATOR", "USER"];
+const ROLE_OPTIONS: Role[] = ROLE_VALUES;
 
 export default function AdminUsersTable({
   users,
@@ -38,13 +39,8 @@ export default function AdminUsersTable({
   );
 
   const mutation = useMutationWithToast({
-    mutationFn: ({
-      userId,
-      role,
-    }: {
-      userId: string;
-      role: Role;
-    }) => adminService.updateUserRole(userId, role),
+    mutationFn: ({ userId, role }: { userId: string; role: Role }) =>
+      adminService.updateUserRole(userId, role),
     successMessage: SUCCESS_MESSAGES.ADMIN_ROLE_UPDATED,
     errorMessage: ERROR_MESSAGES.ADMIN_ROLE_UPDATE_FAILED,
     onSuccess: (updatedUser) => {
@@ -122,26 +118,22 @@ export default function AdminUsersTable({
                     <div className="flex items-center gap-2">
                       <RoleBadge role={role} />
                       <select
+                        aria-label={`Changer le rôle de ${
+                          user.name || user.email
+                        }`}
                         className={cn(
                           "mt-1 block w-full rounded-md border border-gray-200 bg-white py-1.5 px-2 text-xs shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40",
                           isSelf && "cursor-not-allowed opacity-60"
                         )}
                         value={role}
                         onChange={(event) =>
-                          handleChangeRole(
-                            user.id,
-                            event.target.value as Role
-                          )
+                          handleChangeRole(user.id, event.target.value as Role)
                         }
                         disabled={mutation.isPending || isSelf}
                       >
                         {ROLE_OPTIONS.map((option) => (
                           <option key={option} value={option}>
-                            {option === "ADMIN"
-                              ? "Administrateur"
-                              : option === "MODERATOR"
-                              ? "Modérateur"
-                              : "Utilisateur"}
+                            {ROLE_LABELS[option]}
                           </option>
                         ))}
                       </select>
@@ -172,4 +164,3 @@ export default function AdminUsersTable({
     </div>
   );
 }
-

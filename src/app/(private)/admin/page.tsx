@@ -113,9 +113,28 @@ export default async function AdminDashboardPage() {
   } catch (error) {
     console.error("Accès refusé au dashboard admin:", error);
     redirect("/");
+    return null;
   }
 
-  const { metrics, users, conversations } = await fetchDashboardData(adminId);
+  let dashboardData;
+  try {
+    dashboardData = await fetchDashboardData(adminId);
+  } catch (error) {
+    console.error("Erreur lors du chargement des données du dashboard admin:", error);
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center text-red-700">
+          <h1 className="text-lg font-semibold mb-2">Erreur inattendue</h1>
+          <p className="text-sm">
+            Impossible de charger les informations du dashboard administrateur pour le moment.
+            Veuillez réessayer plus tard.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const { metrics, users, conversations } = dashboardData;
 
   return (
     <div className="min-h-screen bg-gray-50">

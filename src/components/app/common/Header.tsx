@@ -76,9 +76,11 @@ export function Header() {
                     <p className="text-xs leading-none text-muted-foreground">
                       {session.user.email}
                     </p>
-                    <RoleBadge
-                      role={(session.user as AuthenticatedUser).role}
-                    />
+                    {"role" in session.user && session.user.role ? (
+                      <RoleBadge
+                        role={(session.user as AuthenticatedUser).role}
+                      />
+                    ) : null}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

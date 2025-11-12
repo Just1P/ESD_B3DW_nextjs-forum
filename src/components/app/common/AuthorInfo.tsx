@@ -37,7 +37,7 @@ export function AuthorInfo({
   prefix = "Posté par",
   className,
   showEdited = true,
-  showRoleBadge = true,
+  showRoleBadge = false,
 }: AuthorInfoProps) {
   const displayName = getDisplayName(author);
   const isEdited =

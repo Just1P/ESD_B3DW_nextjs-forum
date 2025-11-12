@@ -18,7 +18,10 @@ interface MessageItemProps {
 
 export default function MessageItem({ message }: MessageItemProps) {
   const { data: session } = useSession();
-  const sessionUser = session?.user as AuthenticatedUser | undefined;
+  const sessionUser =
+    session?.user && "role" in session.user
+      ? (session.user as AuthenticatedUser)
+      : undefined;
   const [isEditing, setIsEditing] = useState(false);
   const isAuthor = sessionUser?.id === message.author?.id;
   const isAdminUser = isAdmin(sessionUser?.role);

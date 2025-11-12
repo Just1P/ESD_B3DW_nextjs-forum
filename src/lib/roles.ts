@@ -1,4 +1,4 @@
-import type { Role } from "@/generated/prisma";
+import { Role } from "@/generated/prisma";
 
 export const ROLE_LABELS: Record<Role, string> = {
   ADMIN: "Administrateur",
@@ -14,6 +14,8 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   USER:
     "Utilisateur standard. Peut créer des conversations et des messages, voter et modifier son propre contenu.",
 };
+
+export const ROLE_VALUES: Role[] = Object.values(Role) as Role[];
 
 const ROLE_PRIORITY: Record<Role, number> = {
   USER: 1,
@@ -35,8 +37,8 @@ export function isAdmin(role: Role | null | undefined): role is "ADMIN" {
   return role === "ADMIN";
 }
 
-export function isModerator(role: Role | null | undefined): boolean {
-  return isAtLeastRole(role, "MODERATOR");
+export function isModerator(role: Role | null | undefined): role is "ADMIN" | "MODERATOR" {
+  return role === "ADMIN" || role === "MODERATOR";
 }
 
 export function canModerateContent(role: Role | null | undefined): boolean {

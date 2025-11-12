@@ -1,6 +1,7 @@
+import { Role } from "@/generated/prisma";
+import { ROLE_VALUES } from "@/lib/roles";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/session";
-import { Role } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 
 type Params = Promise<{ id: string }>;
@@ -13,38 +14,71 @@ export async function PATCH(
   request: Request,
   { params }: { params: Params }
 ) {
+  let admin;
   try {
-    const admin = await requireAdmin();
-    const { id } = await params;
-    const body = (await request.json()) as UpdateRoleBody;
+    admin = await requireAdmin();
+  } catch {
+    return NextResponse.json(
+      { error: "Accès administrateur requis" },
+      { status: 403 }
+    );
+  }
 
-    if (!body.role) {
-      return NextResponse.json(
-        { error: "Le rôle est requis" },
-        { status: 400 }
-      );
-    }
+  const { id } = await params;
 
-    if (!Object.values(Role).includes(body.role as Role)) {
-      return NextResponse.json(
-        { error: "Rôle invalide" },
-        { status: 400 }
-      );
-    }
+  let body: UpdateRoleBody;
+  try {
+    body = (await request.json()) as UpdateRoleBody;
+  } catch {
+    return NextResponse.json(
+      { error: "Corps de requête invalide" },
+      { status: 400 }
+    );
+  }
 
-    const role = body.role as Role;
+  if (!body.role) {
+    return NextResponse.json(
+      { error: "Le rôle est requis" },
+      { status: 400 }
+    );
+  }
 
-    // Empêcher qu'un admin supprime son propre accès complet
-    if (admin.id === id && role !== "ADMIN") {
-      return NextResponse.json(
-        {
-          error:
-            "Vous ne pouvez pas rétrograder votre propre compte administrateur.",
-        },
-        { status: 400 }
-      );
-    }
+  const validRoles = ROLE_VALUES;
+  if (!validRoles.includes(body.role as Role)) {
+    return NextResponse.json(
+      { error: "Rôle invalide" },
+      { status: 400 }
+    );
+  }
 
+  const role = body.role as Role;
+
+  if (admin.id === id && role !== "ADMIN") {
+    return NextResponse.json(
+      {
+        error:
+          "Vous ne pouvez pas rétrograder votre propre compte administrateur.",
+      },
+      { status: 400 }
+    );
+  }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      role: true,
+    },
+  });
+
+  if (!existingUser) {
+    return NextResponse.json(
+      { error: "Utilisateur introuvable" },
+      { status: 404 }
+    );
+  }
+
+  try {
     const updatedUser = await prisma.user.update({
       where: { id },
       data: { role },
@@ -64,8 +98,8 @@ export async function PATCH(
   } catch (error) {
     console.error("Erreur lors de la mise à jour du rôle utilisateur:", error);
     return NextResponse.json(
-      { error: "Accès administrateur requis" },
-      { status: 403 }
+      { error: "Erreur serveur" },
+      { status: 500 }
     );
   }
 }
