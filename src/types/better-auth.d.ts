@@ -1,5 +1,3 @@
-import type { Session, User } from "better-auth/types";
-
 declare module "better-auth/types" {
   interface User {
     bio?: string | null;
@@ -11,4 +9,3 @@ declare module "better-auth/types" {
     };
   }
 }
-
