@@ -26,7 +26,7 @@ export default function DeleteButton({
       await onDelete(id);
     },
     onSuccess: () => {
-      toast.success(`${entityName} deleted successfully!`);
+      toast.success(`${entityName} supprimé avec succès !`);
       queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });

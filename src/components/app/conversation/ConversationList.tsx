@@ -19,7 +19,7 @@ export default function ConversationList() {
       const data = await ConversationService.fetchConversations();
       setConversations(data);
     } catch (error) {
-      console.error("Error fetching conversations:", error);
+      console.error("Erreur lors de la récupération des conversations:", error);
     }
   };
 

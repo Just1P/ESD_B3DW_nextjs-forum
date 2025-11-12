@@ -31,11 +31,11 @@ export default function MessageList({ conversationId }: MessageListProps) {
   }
 
   if (isError) {
-    return <p>Error loading messages.</p>;
+    return <p>Erreur lors du chargement des messages.</p>;
   }
 
   if (!data || data.length === 0) {
-    return <p>No messages found.</p>;
+    return <p>Aucun message trouvé.</p>;
   }
 
   return (

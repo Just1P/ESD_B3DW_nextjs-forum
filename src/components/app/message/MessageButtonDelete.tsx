@@ -21,7 +21,7 @@ export default function MessageButtonDelete({
       await MessageService.deleteMessage(id);
     },
     onSuccess: () => {
-      toast.success("Message deleted successfully!");
+      toast.success("Message supprimé avec succès !");
       queryClient.invalidateQueries({ queryKey: ["messages"] });
     },
   });

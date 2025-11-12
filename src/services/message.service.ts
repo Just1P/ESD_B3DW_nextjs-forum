@@ -20,7 +20,7 @@ export async function fetchMessages(
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch messages");
+    throw new Error("Échec de la récupération des messages");
   }
   return response.json();
 }
@@ -34,7 +34,7 @@ export async function createMessage(messageDTO: MessageDTO) {
     body: JSON.stringify(messageDTO),
   });
   if (!response.ok) {
-    throw new Error("Failed to create message");
+    throw new Error("Échec de la création du message");
   }
   return response.json();
 }
@@ -44,7 +44,7 @@ export async function deleteById(id: string) {
     method: "DELETE",
   });
   if (!response.ok) {
-    throw new Error("Failed to delete message");
+    throw new Error("Échec de la suppression du message");
   }
   return response.json();
 }

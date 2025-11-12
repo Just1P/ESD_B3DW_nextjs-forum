@@ -14,7 +14,7 @@ export default function AuthLayout({
       <div className="hidden lg:block lg:w-1/2 relative">
         <Image
           src="/auth-image.jpg"
-          alt="Authentication"
+          alt="Authentification"
           fill
           className="object-cover"
           priority

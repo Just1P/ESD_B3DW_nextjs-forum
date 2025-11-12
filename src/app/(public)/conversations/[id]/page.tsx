@@ -12,7 +12,7 @@ export default async function ConversationDetailPage({
 }: ConversationDetailPageProps) {
   const { id } = await params;
 
-  console.log("Conversation ID:", id);
+  console.log("ID de la conversation:", id);
   const response = await fetch(`http://localhost:3000/api/conversations/${id}`);
   const conversation = await response.json();
 
@@ -20,12 +20,12 @@ export default async function ConversationDetailPage({
     <div className="container mx-auto">
       <div className="my-4">
         <Link href="/" className="flex items-center mb-4">
-          <Button variant="link">&larr; Back to Conversations</Button>
+          <Button variant="link">&larr; Retour aux conversations</Button>
         </Link>
       </div>
 
       <div className="bg-amber-100 p-4 rounded-md text-xl flex items-center gap-2">
-        Subject:
+        Sujet :
         <h1>{conversation?.title}</h1>
       </div>
 
