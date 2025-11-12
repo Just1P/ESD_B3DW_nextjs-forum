@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/session";
+import { requireAuth, getCurrentUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { VoteType } from "@/generated/prisma";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const currentUser = await getCurrentUser();
 
   const conversation = await prisma.conversation.findUnique({
     where: { id },
@@ -25,6 +27,12 @@ export async function GET(
           deletedAt: null,
         },
       },
+      votes: {
+        select: {
+          type: true,
+          userId: true,
+        },
+      },
     },
   });
 
@@ -35,7 +43,19 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(conversation);
+  // Calculer le score de vote et le vote de l'utilisateur
+  const upvotes = conversation.votes.filter((v) => v.type === VoteType.UP).length;
+  const downvotes = conversation.votes.filter((v) => v.type === VoteType.DOWN).length;
+  const voteScore = upvotes - downvotes;
+  const userVote = currentUser
+    ? conversation.votes.find((v) => v.userId === currentUser.id)?.type || null
+    : null;
+
+  return NextResponse.json({
+    ...conversation,
+    voteScore,
+    userVote,
+  });
 }
 
 export async function DELETE(

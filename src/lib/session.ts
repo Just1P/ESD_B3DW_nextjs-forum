@@ -27,3 +27,8 @@ export async function isAuthenticated(): Promise<boolean> {
   const session = await getServerSession();
   return !!session?.user;
 }
+
+export async function getCurrentUser() {
+  const session = await getServerSession();
+  return session?.user || null;
+}

@@ -42,39 +42,42 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 container mx-auto">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
+      <div className="container flex h-12 items-center justify-between mx-auto px-4">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center space-x-2">
-            <MessageSquare className="h-6 w-6" />
-            <span className="font-bold text-xl">Forum</span>
+          <Link
+            href="/"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+          >
+            <MessageSquare className="h-5 w-5 text-orange-500" />
+            <span className="font-bold text-lg">Forum</span>
           </Link>
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+          <nav className="hidden md:flex items-center space-x-4 text-sm">
             <Link
               href="/"
-              className="transition-colors hover:text-foreground/80 text-foreground"
+              className="px-3 py-1 rounded-full hover:bg-gray-100 transition-colors font-medium"
             >
-              Conversations
+              Accueil
             </Link>
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {isPending ? (
-            <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+            <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
           ) : session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-10 w-10 rounded-full"
+                  className="relative h-8 w-8 rounded-full p-0 hover:bg-gray-100"
                 >
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-8 w-8 border-2 border-gray-200">
                     <AvatarImage
                       src={session.user.image || undefined}
                       alt={session.user.name || "Avatar"}
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-xs">
                       {session.user.name
                         ? getInitials(session.user.name)
                         : session.user.email?.[0].toUpperCase() || "U"}
@@ -118,11 +121,11 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" asChild>
-                <Link href="/signin">Se connecter</Link>
+              <Button variant="outline" size="sm" asChild className="h-8">
+                <Link href="/signin">Connexion</Link>
               </Button>
-              <Button asChild>
-                <Link href="/signup">S&apos;inscrire</Link>
+              <Button size="sm" asChild className="h-8">
+                <Link href="/signup">Inscription</Link>
               </Button>
             </div>
           )}

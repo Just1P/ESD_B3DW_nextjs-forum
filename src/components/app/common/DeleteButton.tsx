@@ -37,11 +37,13 @@ export default function DeleteButton({
 
   return (
     <Button
-      variant="destructive"
-      className={cn("bg-red-400", className)}
+      variant="ghost"
+      size="sm"
+      className={cn("h-7 px-2 text-xs text-red-500 hover:text-red-700 hover:bg-red-50", className)}
       onClick={handleDelete}
     >
-      <Trash />
+      <Trash className="h-3 w-3 mr-1" />
+      Supprimer
     </Button>
   );
 }

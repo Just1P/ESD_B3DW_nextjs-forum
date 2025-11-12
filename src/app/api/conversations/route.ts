@@ -1,8 +1,11 @@
+import { VoteType } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/session";
+import { getCurrentUser, requireAuth } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
+  const currentUser = await getCurrentUser();
+
   const conversations = await prisma.conversation.findMany({
     include: {
       messages: {
@@ -19,6 +22,12 @@ export async function GET() {
           image: true,
         },
       },
+      votes: {
+        select: {
+          type: true,
+          userId: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -28,7 +37,28 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json(conversations);
+  // Calculer le score de vote et le vote de l'utilisateur pour chaque conversation
+  const conversationsWithVotes = conversations.map((conversation) => {
+    const upvotes = conversation.votes.filter(
+      (v) => v.type === VoteType.UP
+    ).length;
+    const downvotes = conversation.votes.filter(
+      (v) => v.type === VoteType.DOWN
+    ).length;
+    const voteScore = upvotes - downvotes;
+    const userVote = currentUser
+      ? conversation.votes.find((v) => v.userId === currentUser.id)?.type ||
+        null
+      : null;
+
+    return {
+      ...conversation,
+      voteScore,
+      userVote,
+    };
+  });
+
+  return NextResponse.json(conversationsWithVotes);
 }
 
 export async function POST(request: NextRequest) {

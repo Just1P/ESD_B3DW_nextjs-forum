@@ -6,7 +6,6 @@ import { Spinner } from "@/components/ui/spinner";
 import MessageService from "@/services/message.service";
 import { UpdateMessageDTO } from "@/types/message.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -55,22 +54,23 @@ export default function MessageEditForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-      <div className="relative">
+      <div className="bg-gray-50 border border-gray-200 rounded p-2">
         <Input
           type="text"
-          className="pr-24"
+          className="mb-2 text-sm"
           autoFocus
           {...register("content", { required: true })}
         />
-        <div className="absolute top-1/2 right-2 -translate-y-1/2 flex gap-1">
+        <div className="flex gap-2 justify-end">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={onCancel}
             disabled={mutation.isPending}
+            className="h-7 text-xs"
           >
-            <X className="h-4 w-4" />
+            Annuler
           </Button>
           <Button
             type="submit"
@@ -78,8 +78,9 @@ export default function MessageEditForm({
             disabled={
               !contentWatch || contentWatch.trim() === "" || mutation.isPending
             }
+            className="h-7 text-xs"
           >
-            {mutation.isPending && <Spinner className="mr-2" />}
+            {mutation.isPending && <Spinner className="mr-2 h-3 w-3" />}
             Enregistrer
           </Button>
         </div>

@@ -1,9 +1,9 @@
 "use client";
 
 import ConversationService from "@/services/conversation.service";
+import { ConversationWithExtend } from "@/types/conversation.type";
 import { useEffect, useState } from "react";
 import ConversationCard from "./ConversationCard";
-import { ConversationWithExtend } from "@/types/conversation.type";
 
 export default function ConversationList() {
   const [conversations, setConversations] = useState<ConversationWithExtend[]>(
@@ -24,11 +24,13 @@ export default function ConversationList() {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-4">
       {conversations.length === 0 ? (
-        <p>Aucune conversation disponible.</p>
+        <div className="bg-white border border-gray-200 rounded-md p-8 text-center">
+          <p className="text-gray-500">Aucune conversation disponible.</p>
+        </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           {conversations.map((conversation) => (
             <ConversationCard
               key={conversation.id}

@@ -51,11 +51,11 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
 
   if (isPending) {
     return (
-      <div className="relative my-5">
+      <div className="bg-white border border-gray-200 rounded-md p-4">
         <Input
           type="text"
           placeholder="Chargement..."
-          className="py-6"
+          className="py-5 text-sm"
           disabled
         />
       </div>
@@ -64,17 +64,17 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
 
   if (!session?.user) {
     return (
-      <div className="relative my-5">
-        <div className="border rounded-md p-6 bg-gray-50 text-center">
-          <p className="text-gray-700 mb-3">
-            Vous devez vous connecter pour envoyer un message
+      <div className="bg-white border border-gray-200 rounded-md p-6">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4 text-sm">
+            Connectez-vous pour participer à la discussion
           </p>
           <div className="flex gap-2 justify-center">
-            <Button variant="outline" asChild>
-              <Link href="/signin">Se connecter</Link>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/signin">Connexion</Link>
             </Button>
-            <Button asChild>
-              <Link href="/signup">S&apos;inscrire</Link>
+            <Button size="sm" asChild>
+              <Link href="/signup">Inscription</Link>
             </Button>
           </div>
         </div>
@@ -83,23 +83,26 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
   }
 
   return (
-    <form className="relative my-5" onSubmit={handleSubmit(onSubmit)}>
-      <Input
-        type="text"
-        placeholder="Écrivez votre message..."
-        className="py-6"
-        {...register("content")}
-      />
-      <Button
-        type="submit"
-        className="absolute top-1/2 right-0 -translate-y-1/2 mr-2"
-        disabled={
-          !contentWatch || contentWatch.trim() === "" || mutation.isPending
-        }
-      >
-        {mutation.isPending && <Spinner className="mr-2" />}
-        Envoyer
-      </Button>
-    </form>
+    <div className="bg-white border border-gray-200 rounded-md p-4">
+      <form className="relative" onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          type="text"
+          placeholder="Qu'en pensez-vous ?"
+          className="py-5 pr-24 text-sm"
+          {...register("content")}
+        />
+        <Button
+          type="submit"
+          size="sm"
+          className="absolute top-1/2 right-0 -translate-y-1/2 mr-2 h-8"
+          disabled={
+            !contentWatch || contentWatch.trim() === "" || mutation.isPending
+          }
+        >
+          {mutation.isPending && <Spinner className="mr-2" />}
+          Commenter
+        </Button>
+      </form>
+    </div>
   );
 }

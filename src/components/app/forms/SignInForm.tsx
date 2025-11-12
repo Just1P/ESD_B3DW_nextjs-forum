@@ -107,8 +107,8 @@ export function SignInForm() {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="space-y-1">
+    <Card className="w-full border-0 shadow-none">
+      <CardHeader className="space-y-1 px-0">
         <CardTitle className="text-2xl font-bold text-center">
           Se connecter
         </CardTitle>
@@ -116,7 +116,7 @@ export function SignInForm() {
           Entrez vos identifiants pour accéder à votre compte
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -171,7 +171,7 @@ export function SignInForm() {
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
+      <CardFooter className="flex flex-col space-y-2 px-0">
         <div className="text-sm text-center text-muted-foreground">
           Vous n&apos;avez pas de compte ?{" "}
           <Link

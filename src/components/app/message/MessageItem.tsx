@@ -36,41 +36,40 @@ export default function MessageItem({ message }: MessageItemProps) {
   const isAuthor = session?.user?.id === message.author?.id;
 
   return (
-    <div className="border shadow-sm rounded-md p-6 relative">
-      {isAuthor && !isEditing && (
-        <div className="absolute top-2 right-2 flex gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsEditing(true)}
-            className="h-8 w-8 p-0"
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <DeleteButton
-            entityName="Message"
-            queryKey="messages"
-            onDelete={MessageService.deleteById}
-            id={message.id}
-          />
+    <div className="bg-white border-l-2 border-transparent hover:border-gray-300 transition-colors">
+      <div className="flex gap-3 p-4">
+        {/* Ligne de vote/thread à gauche */}
+        <div className="flex flex-col items-center gap-2 pt-1">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={message.author?.image || undefined} />
+            <AvatarFallback className="text-xs">
+              {authorInitials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="w-0.5 bg-gray-200 flex-1 min-h-[20px]"></div>
         </div>
-      )}
-      <div className="flex items-start gap-4">
-        <Avatar>
-          <AvatarImage src={message.author?.image || undefined} />
-          <AvatarFallback>{authorInitials}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-semibold">{authorName}</span>
-            <span className="text-sm text-gray-500">
+
+        {/* Contenu du message */}
+        <div className="flex-1 min-w-0">
+          {/* En-tête */}
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="font-medium text-sm text-gray-900">
+              {authorName}
+            </span>
+            <span className="text-xs text-gray-400">•</span>
+            <span className="text-xs text-gray-500">
               {formatDistanceToNow(message.createdAt)}
             </span>
             {message.updatedAt &&
               message.updatedAt.toString() !== message.createdAt.toString() && (
-                <span className="text-xs text-gray-400 italic">(modifié)</span>
+                <>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs text-gray-400 italic">modifié</span>
+                </>
               )}
           </div>
+
+          {/* Contenu */}
           {isEditing ? (
             <MessageEditForm
               messageId={message.id}
@@ -78,7 +77,30 @@ export default function MessageItem({ message }: MessageItemProps) {
               onCancel={() => setIsEditing(false)}
             />
           ) : (
-            <p className="text-gray-800">{message.content}</p>
+            <p className="text-sm text-gray-800 mb-2 leading-relaxed">
+              {message.content}
+            </p>
+          )}
+
+          {/* Actions */}
+          {isAuthor && !isEditing && (
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+                className="h-7 px-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <Pencil className="h-3 w-3 mr-1" />
+                Modifier
+              </Button>
+              <DeleteButton
+                entityName="Message"
+                queryKey="messages"
+                onDelete={MessageService.deleteById}
+                id={message.id}
+              />
+            </div>
           )}
         </div>
       </div>

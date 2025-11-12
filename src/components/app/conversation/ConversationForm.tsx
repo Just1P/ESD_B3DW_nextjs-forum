@@ -38,20 +38,21 @@ export default function ConversationForm() {
   const titleWatch = watch("title");
 
   return (
-    <form className="relative my-5" onSubmit={handleSubmit(onSubmit)}>
+    <form className="relative" onSubmit={handleSubmit(onSubmit)}>
       <Input
         type="text"
-        placeholder="Titre de la nouvelle conversation..."
-        className="py-6"
+        placeholder="Donnez un titre à votre sujet..."
+        className="py-5 pr-24 text-sm"
         {...register("title", { required: true })}
       />
       <Button
         type="submit"
-        className="absolute top-1/2 right-0 -translate-y-1/2 mr-2"
+        size="sm"
+        className="absolute top-1/2 right-0 -translate-y-1/2 mr-2 h-8"
         disabled={!titleWatch || titleWatch.trim() === "" || mutation.isPending}
       >
         {mutation.isPending && <Spinner className="mr-2" />}
-        Créer
+        Publier
       </Button>
     </form>
   );

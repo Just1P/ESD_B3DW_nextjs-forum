@@ -19,6 +19,7 @@ model Conversation {
   title String?
 
   messages Message[]
+  votes    Vote[]
 
   author User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
@@ -58,6 +59,7 @@ model User {
 
   conversations Conversation[]
   messages      Message[]
+  votes         Vote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -112,4 +114,23 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+model Vote {
+  id             String       @id @default(cuid())
+  type           VoteType
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([userId, conversationId])
+  @@map("vote")
 }
