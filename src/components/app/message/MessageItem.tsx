@@ -7,6 +7,7 @@ import { useSession } from "@/lib/auth-client";
 import { formatDistanceToNow } from "@/lib/date";
 import MessageService from "@/services/message.service";
 import { Pencil } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import DeleteButton from "../common/DeleteButton";
 import MessageEditForm from "./MessageEditForm";
@@ -38,24 +39,40 @@ export default function MessageItem({ message }: MessageItemProps) {
   return (
     <div className="bg-white border-l-2 border-transparent hover:border-gray-300 transition-colors">
       <div className="flex gap-3 p-4">
-        {/* Ligne de vote/thread à gauche */}
         <div className="flex flex-col items-center gap-2 pt-1">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={message.author?.image || undefined} />
-            <AvatarFallback className="text-xs">
-              {authorInitials}
-            </AvatarFallback>
-          </Avatar>
+          {message.author ? (
+            <Link href={`/users/${message.author.id}`}>
+              <Avatar className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity">
+                <AvatarImage src={message.author?.image || undefined} />
+                <AvatarFallback className="text-xs">
+                  {authorInitials}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="text-xs">
+                {authorInitials}
+              </AvatarFallback>
+            </Avatar>
+          )}
           <div className="w-0.5 bg-gray-200 flex-1 min-h-[20px]"></div>
         </div>
 
-        {/* Contenu du message */}
         <div className="flex-1 min-w-0">
-          {/* En-tête */}
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-medium text-sm text-gray-900">
-              {authorName}
-            </span>
+            {message.author ? (
+              <Link
+                href={`/users/${message.author.id}`}
+                className="font-medium text-sm text-gray-900 hover:underline"
+              >
+                {authorName}
+              </Link>
+            ) : (
+              <span className="font-medium text-sm text-gray-900">
+                {authorName}
+              </span>
+            )}
             <span className="text-xs text-gray-400">•</span>
             <span className="text-xs text-gray-500">
               {formatDistanceToNow(message.createdAt)}
@@ -69,7 +86,6 @@ export default function MessageItem({ message }: MessageItemProps) {
               )}
           </div>
 
-          {/* Contenu */}
           {isEditing ? (
             <MessageEditForm
               messageId={message.id}
@@ -82,7 +98,6 @@ export default function MessageItem({ message }: MessageItemProps) {
             </p>
           )}
 
-          {/* Actions */}
           {isAuthor && !isEditing && (
             <div className="flex items-center gap-2 mt-2">
               <Button
