@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { ROLE_VALUES } from "./roles";
 import { sendPasswordResetEmail } from "./email";
 import { env } from "./env";
 import { prisma } from "./prisma";
@@ -12,26 +11,6 @@ const isGoogleProviderConfigured =
 const isGithubProviderConfigured =
   Boolean(process.env.GITHUB_CLIENT_ID) &&
   Boolean(process.env.GITHUB_CLIENT_SECRET);
-
-const socialProviders = {
-  ...(isGoogleProviderConfigured
-    ? {
-        google: {
-          clientId: process.env.GOOGLE_CLIENT_ID as string,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-          prompt: "select_account",
-        },
-      }
-    : {}),
-  ...(isGithubProviderConfigured
-    ? {
-        github: {
-          clientId: process.env.GITHUB_CLIENT_ID as string,
-          clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-        },
-      }
-    : {}),
-};
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -58,7 +37,6 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: "USER",
-        enum: ROLE_VALUES,
       },
     },
   },
@@ -68,7 +46,26 @@ export const auth = betterAuth({
     ...(env.appUrl ? [env.appUrl] : []),
   ],
   socialProviders:
-    Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
+    isGoogleProviderConfigured || isGithubProviderConfigured
+      ? {
+          ...(isGoogleProviderConfigured
+            ? {
+                google: {
+                  clientId: process.env.GOOGLE_CLIENT_ID as string,
+                  clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+                },
+              }
+            : {}),
+          ...(isGithubProviderConfigured
+            ? {
+                github: {
+                  clientId: process.env.GITHUB_CLIENT_ID as string,
+                  clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+                },
+              }
+            : {}),
+        }
+      : undefined,
   advanced: {
     disableCSRFCheck: env.isDevelopment,
   },
