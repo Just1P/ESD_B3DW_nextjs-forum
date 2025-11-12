@@ -19,7 +19,7 @@ Le forum doit proposer une **expérience fluide et réactive**, une **authentifi
 | **Authentification**          | [Auth.js (NextAuth)](https://authjs.dev/)      | Authentification sécurisée (email/password ou providers) |
 | **Hébergement du Front/Back** | [Vercel](https://vercel.com/)                  | Déploiement de l’application Next.js                     |
 | **Hébergement BDD + Storage** | [Supabase](https://supabase.com/)              | Stockage des données et des images de profil             |
-| **Stockage fichiers**         | Supabase Storage                               | Gestion des avatars et images liées aux conversations    |
+| **Stockage fichiers**         | Supabase Storage                               | Gestion des images et images liées aux conversations     |
 | **Langage**                   | TypeScript                                     | Sécurité et robustesse du code                           |
 | **Styles**                    | Tailwind CSS                                   | Mise en page et design responsive                        |
 | **API**                       | REST (via `/api/*`)                            | Communication entre front et back                        |
@@ -46,7 +46,7 @@ Le forum doit proposer une **expérience fluide et réactive**, une **authentifi
   - **Créer un compte** via Auth.js
   - **Se connecter / se déconnecter**
   - **Accéder à ses paramètres** pour :
-    - Modifier ses informations personnelles (pseudo, bio, avatar)
+    - Modifier ses informations personnelles (pseudo, bio, image)
     - Consulter ses conversations et réponses
 - L’accès à certaines actions (répondre, créer une conversation, envoyer un message privé) nécessite d’être **connecté**.
 
@@ -299,7 +299,7 @@ Vous avez le **choix** entre deux solutions :
      - `email` (String, @unique)
      - `password` (String, haché)
      - `name` (String, optionnel)
-     - `avatar` (String, optionnel)
+     - `image` (String, optionnel)
      - `bio` (String, optionnel)
      - `createdAt` (DateTime, @default(now()))
      - `updatedAt` (DateTime, @updatedAt)
@@ -443,7 +443,7 @@ Vous avez le **choix** entre deux solutions :
 
 - Ajouter la **réinitialisation de mot de passe** (envoi d'email)
 - Créer une page **profil utilisateur** (`/users/[id]`) affichant les contributions
-- Implémenter la **modification de profil** (avatar, bio, nom)
+- Implémenter la **modification de profil** (image, bio, nom)
 - Ajouter un système de **rôles** (admin, modérateur, utilisateur)
 
 ### Optionnel
