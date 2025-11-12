@@ -2,14 +2,6 @@ import ResetPasswordEmail from "@/emails/reset-password";
 import { render } from "@react-email/components";
 import { Resend } from "resend";
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error(
-    "RESEND_API_KEY n'est pas défini dans les variables d'environnement"
-  );
-}
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function sendPasswordResetEmail(
   email: string,
   username: string,
@@ -17,8 +9,13 @@ export async function sendPasswordResetEmail(
 ) {
   try {
     if (!process.env.RESEND_API_KEY) {
-      throw new Error("RESEND_API_KEY n'est pas configuré");
+      console.warn("⚠️ RESEND_API_KEY n'est pas configuré - email non envoyé");
+      console.log(`Email qui aurait été envoyé à: ${email}`);
+      console.log(`Token de réinitialisation: ${resetToken}`);
+      return { id: "test-mode", message: "Email non envoyé (mode test)" };
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/reset-password/${resetToken}`;
 
