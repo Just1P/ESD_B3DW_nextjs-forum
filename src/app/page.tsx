@@ -2,6 +2,8 @@ import ConversationForm from "@/components/app/conversation/ConversationForm";
 import ConversationListWithSort from "@/components/app/conversation/ConversationListWithSort";
 import { isAuthenticated } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const isAuth = await isAuthenticated();
 

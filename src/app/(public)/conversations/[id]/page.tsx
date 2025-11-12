@@ -3,6 +3,8 @@ import MessageForm from "@/components/app/message/MessageForm";
 import MessageList from "@/components/app/message/MessageList";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 interface ConversationDetailPageProps {
   params: Promise<{ id: string }>;
 }
