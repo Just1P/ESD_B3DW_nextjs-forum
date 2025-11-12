@@ -4,17 +4,39 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    // Vérifier si un token Blob est configuré (supporte les noms personnalisés)
+    // Trouver automatiquement le token Blob (supporte tous les noms personnalisés)
     const blobToken =
       process.env.BLOB_READ_WRITE_TOKEN ||
-      process.env.USER_AVATAR_READ_WRITE_TOKEN;
+      process.env.USER_AVATAR_READ_WRITE_TOKEN ||
+      // Chercher n'importe quelle variable qui ressemble à un token Blob
+      Object.keys(process.env).find((key) => key.endsWith("_READ_WRITE_TOKEN"))
+        ? process.env[
+            Object.keys(process.env).find((key) =>
+              key.endsWith("_READ_WRITE_TOKEN")
+            )!
+          ]
+        : undefined;
 
     if (!blobToken) {
+      // Logger les variables disponibles pour le débogage
+      const availableEnvVars = Object.keys(process.env)
+        .filter((key) => key.includes("BLOB") || key.includes("TOKEN"))
+        .join(", ");
+
       console.error("❌ Aucun token Vercel Blob n'est configuré");
+      console.error(
+        "Variables d'environnement disponibles (contenant BLOB ou TOKEN):",
+        availableEnvVars || "aucune"
+      );
+
       return NextResponse.json(
         {
           error: "Service d'upload non configuré",
           details: "Veuillez configurer Vercel Blob",
+          availableVars:
+            process.env.NODE_ENV === "development"
+              ? availableEnvVars
+              : undefined,
         },
         { status: 503 }
       );
