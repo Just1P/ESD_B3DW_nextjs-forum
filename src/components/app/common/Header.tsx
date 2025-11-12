@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,10 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "@/lib/auth-client";
+import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { UserAvatar } from "./UserAvatar";
 
 export function Header() {
   const router = useRouter();
@@ -23,22 +24,13 @@ export function Header() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success("Déconnexion réussie");
+      toast.success(SUCCESS_MESSAGES.SIGN_OUT);
       router.push("/signin");
       router.refresh();
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
-      toast.error("Erreur lors de la déconnexion");
+      toast.error(ERROR_MESSAGES.GENERIC);
     }
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
   };
 
   return (
@@ -60,17 +52,11 @@ export function Header() {
                   variant="ghost"
                   className="relative h-8 w-8 rounded-full p-0 hover:bg-gray-100"
                 >
-                  <Avatar className="h-8 w-8 border-2 border-gray-200">
-                    <AvatarImage
-                      src={session.user.image || undefined}
-                      alt={session.user.name || "Avatar"}
-                    />
-                    <AvatarFallback className="text-xs">
-                      {session.user.name
-                        ? getInitials(session.user.name)
-                        : session.user.email?.[0].toUpperCase() || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar 
+                    user={session.user}
+                    size="sm"
+                    className="border-2 border-gray-200"
+                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>

@@ -11,12 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { useSession } from "@/lib/auth-client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
+import { updateUser, useSession } from "@/lib/auth-client";
+import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { ImageUpload } from "./ImageUpload";
 
 type ProfileFormData = {
@@ -36,8 +35,6 @@ type SessionUser = {
 
 export function ProfileEditForm() {
   const { data: session, isPending } = useSession();
-  const queryClient = useQueryClient();
-  const router = useRouter();
 
   const user = session?.user as SessionUser | undefined;
 
@@ -54,31 +51,38 @@ export function ProfileEditForm() {
     },
   });
 
-  const updateProfileMutation = useMutation({
+  const updateProfileMutation = useMutationWithToast({
     mutationFn: async (data: ProfileFormData) => {
-      const response = await fetch("/api/user/me/update", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      const result = await updateUser({
+        name: data.name,
+        image: data.image,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Erreur lors de la mise à jour");
+      if (!result.data) {
+        throw new Error(
+          result.error?.message || ERROR_MESSAGES.PROFILE_UPDATE_FAILED
+        );
       }
 
-      return response.json();
+      if (data.bio !== undefined) {
+        const response = await fetch("/api/user/me/update", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ bio: data.bio }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || ERROR_MESSAGES.PROFILE_UPDATE_FAILED);
+        }
+      }
+
+      return result.data;
     },
-    onSuccess: () => {
-      toast.success("Profil mis à jour avec succès");
-      queryClient.invalidateQueries({ queryKey: ["session"] });
-      router.refresh();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
+    successMessage: SUCCESS_MESSAGES.PROFILE_UPDATED,
+    invalidateQueries: QUERY_KEYS.SESSION,
   });
 
   const onSubmit = (data: ProfileFormData) => {

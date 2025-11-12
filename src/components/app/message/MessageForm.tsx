@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
 import { useSession } from "@/lib/auth-client";
+import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
 import MessageService from "@/services/message.service";
 import { MessageDTO } from "@/types/message.type";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -17,23 +18,21 @@ interface MessageFormProps {
 
 export default function MessageForm({ conversationId }: MessageFormProps) {
   const { register, handleSubmit, watch, reset } = useForm<MessageDTO>();
-  const queryClient = useQueryClient();
   const { data: session, isPending } = useSession();
 
-  const mutation = useMutation({
-    mutationFn: async (data: MessageDTO) => {
-      await MessageService.createMessage({
+  const mutation = useMutationWithToast({
+    mutationFn: (data: MessageDTO) =>
+      MessageService.createMessage({
         ...data,
         conversationId,
-      });
-    },
+      }),
+    successMessage: SUCCESS_MESSAGES.MESSAGE_CREATED,
+    errorMessage: ERROR_MESSAGES.MESSAGE_CREATE_FAILED,
+    invalidateQueries: QUERY_KEYS.MESSAGES,
     onSuccess: () => {
       reset();
-      toast.success("Message envoyé avec succès !");
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
     },
     onError: (error) => {
-      toast.error("Erreur lors de l'envoi du message");
       console.error(error);
     },
   });

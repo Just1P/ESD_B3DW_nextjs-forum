@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     await auth.api.forgetPassword({
       body: {
         email,
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/reset-password`,
+        redirectTo: `${env.appUrl}/reset-password`,
       },
     });
 

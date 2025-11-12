@@ -1,13 +1,14 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { sendPasswordResetEmail } from "./email";
+import { env } from "./env";
 import { prisma } from "./prisma";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  baseURL: env.appUrl,
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, token }) => {
@@ -29,12 +30,10 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: [
     "http://localhost:3000",
-    ...(process.env.NEXT_PUBLIC_APP_URL
-      ? [process.env.NEXT_PUBLIC_APP_URL]
-      : []),
+    ...(env.appUrl ? [env.appUrl] : []),
   ],
   advanced: {
-    disableCSRFCheck: process.env.NODE_ENV === "development",
+    disableCSRFCheck: env.isDevelopment,
   },
 });
 

@@ -6,7 +6,9 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/shadcn-io/dropzone";
-import { useState } from "react";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@/lib/constants";
+import { getInitials } from "@/lib/user-utils";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ImageCropDialog } from "./ImageCropDialog";
 
@@ -23,6 +25,11 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [originalFileName, setOriginalFileName] = useState<string>("");
+
+  // Synchroniser previewUrl avec la prop value quand elle change
+  useEffect(() => {
+    setPreviewUrl(value);
+  }, [value]);
 
   const handleDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -66,13 +73,13 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
         setImageToCrop(null);
       }
 
-      toast.success("Image uploadée avec succès !");
+      toast.success(SUCCESS_MESSAGES.IMAGE_UPLOADED);
     } catch (error) {
       console.error("Erreur lors de l'upload:", error);
       toast.error(
         error instanceof Error
           ? error.message
-          : "Erreur lors de l'upload de l'image"
+          : ERROR_MESSAGES.IMAGE_UPLOAD_FAILED
       );
       setPreviewUrl(value);
       setUploadedFiles([]);
@@ -82,23 +89,17 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
   };
 
   const handleError = (error: Error) => {
-    toast.error(error.message || "Erreur lors de l'upload");
-  };
-
-  const getInitials = (name?: string) => {
-    if (!name) return "U";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    toast.error(error.message || ERROR_MESSAGES.IMAGE_UPLOAD_FAILED);
   };
 
   return (
     <div className="flex flex-col items-center gap-4">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={previewUrl || value || undefined} alt="Avatar" />
+        <AvatarImage
+          src={previewUrl || value || undefined}
+          alt="Avatar"
+          key={previewUrl || value || "default"}
+        />
         <AvatarFallback className="text-2xl">
           {getInitials(userName)}
         </AvatarFallback>

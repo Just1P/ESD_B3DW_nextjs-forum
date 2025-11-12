@@ -1,43 +1,26 @@
-import { ConversationDTO } from "@/types/conversation.type";
+import { apiClient } from "@/lib/api-client";
+import {
+  ConversationDTO,
+  ConversationWithExtend,
+} from "@/types/conversation.type";
 
 async function fetchConversations() {
-  const response = await fetch("/api/conversations");
-  if (!response.ok) {
-    throw new Error("Échec de la récupération des conversations");
-  }
-  return response.json();
+  return apiClient.get<ConversationWithExtend[]>("/conversations");
 }
 
 async function fetchConversationById(id: string) {
-  const response = await fetch(`/api/conversations/${id}`);
-  if (!response.ok) {
-    throw new Error("Échec de la récupération de la conversation");
-  }
-  return response.json();
+  return apiClient.get<ConversationWithExtend>(`/conversations/${id}`);
 }
 
 async function createConversation(conversationDTO: ConversationDTO) {
-  const response = await fetch("/api/conversations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(conversationDTO),
-  });
-  if (!response.ok) {
-    throw new Error("Échec de la création de la conversation");
-  }
-  return response.json();
+  return apiClient.post<ConversationWithExtend, ConversationDTO>(
+    "/conversations",
+    conversationDTO
+  );
 }
 
 async function deleteById(id: string) {
-  const response = await fetch(`/api/conversations/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error("Échec de la suppression de la conversation");
-  }
-  return response.json();
+  await apiClient.delete<void>(`/conversations/${id}`);
 }
 
 const ConversationService = {

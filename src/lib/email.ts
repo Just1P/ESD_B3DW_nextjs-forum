@@ -1,6 +1,7 @@
 import ResetPasswordEmail from "@/emails/reset-password";
 import { render } from "@react-email/components";
 import { Resend } from "resend";
+import { env } from "./env";
 
 export async function sendPasswordResetEmail(
   email: string,
@@ -17,7 +18,7 @@ export async function sendPasswordResetEmail(
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/reset-password/${resetToken}`;
+    const resetLink = `${env.appUrl}/reset-password/${resetToken}`;
 
     console.log("📧 Envoi de l'email à:", email);
     console.log("🔗 Lien de réinitialisation:", resetLink);
