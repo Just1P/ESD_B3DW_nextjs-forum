@@ -21,6 +21,9 @@ export async function GET(
       },
       messages: {
         select: { id: true },
+        where: {
+          deletedAt: null,
+        },
       },
     },
   });

@@ -7,6 +7,9 @@ export async function GET() {
     include: {
       messages: {
         select: { id: true },
+        where: {
+          deletedAt: null,
+        },
       },
       author: {
         select: {
@@ -41,6 +44,9 @@ export async function POST(request: NextRequest) {
       include: {
         messages: {
           select: { id: true },
+          where: {
+            deletedAt: null,
+          },
         },
       },
     });
