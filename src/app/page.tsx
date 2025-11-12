@@ -1,5 +1,5 @@
 import ConversationForm from "@/components/app/conversation/ConversationForm";
-import ConversationList from "@/components/app/conversation/ConversationList";
+import ConversationListWithSort from "@/components/app/conversation/ConversationListWithSort";
 import { isAuthenticated } from "@/lib/session";
 
 export default async function Home() {
@@ -24,19 +24,7 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Onglets de tri style Reddit */}
-        <div className="mb-3 px-4">
-          <div className="flex items-center gap-2 text-sm">
-            <button className="px-3 py-1.5 font-medium text-blue-600 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
-              Récent
-            </button>
-            <button className="px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
-              Populaire
-            </button>
-          </div>
-        </div>
-
-        <ConversationList />
+        <ConversationListWithSort />
       </div>
     </div>
   );

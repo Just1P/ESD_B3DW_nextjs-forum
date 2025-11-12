@@ -43,9 +43,12 @@ export async function GET(
     );
   }
 
-  // Calculer le score de vote et le vote de l'utilisateur
-  const upvotes = conversation.votes.filter((v) => v.type === VoteType.UP).length;
-  const downvotes = conversation.votes.filter((v) => v.type === VoteType.DOWN).length;
+  const upvotes = conversation.votes.filter(
+    (v) => v.type === VoteType.UP
+  ).length;
+  const downvotes = conversation.votes.filter(
+    (v) => v.type === VoteType.DOWN
+  ).length;
   const voteScore = upvotes - downvotes;
   const userVote = currentUser
     ? conversation.votes.find((v) => v.userId === currentUser.id)?.type || null
@@ -66,7 +69,6 @@ export async function DELETE(
     const user = await requireAuth();
     const { id } = await params;
 
-    // Vérifier que la conversation existe et récupérer son auteur
     const conversation = await prisma.conversation.findUnique({
       where: { id },
       select: {
@@ -89,7 +91,6 @@ export async function DELETE(
       );
     }
 
-    // Vérifier que l'utilisateur est bien l'auteur de la conversation
     if (conversation.userId !== user.id) {
       return NextResponse.json(
         { error: "Vous n'êtes pas autorisé à supprimer cette conversation" },

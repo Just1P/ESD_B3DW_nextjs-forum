@@ -30,7 +30,10 @@ export default function VoteButtons({
     mutationFn: async (type: VoteType) => {
       await VoteService.vote(conversationId, type);
     },
-    onSuccess: (_, type) => {
+    onMutate: async (type) => {
+      const previousScore = voteScore;
+      const previousVote = userVote;
+
       if (userVote === type) {
         setVoteScore(voteScore + (type === VoteType.UP ? -1 : 1));
         setUserVote(null);
@@ -41,9 +44,17 @@ export default function VoteButtons({
         setVoteScore(voteScore + (type === VoteType.UP ? 1 : -1));
         setUserVote(type);
       }
+
+      return { previousScore, previousVote };
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
-    onError: (error) => {
+    onError: (error, _type, context) => {
+      if (context) {
+        setVoteScore(context.previousScore);
+        setUserVote(context.previousVote);
+      }
       console.error("Erreur lors du vote:", error);
       toast.error("Erreur lors du vote");
     },

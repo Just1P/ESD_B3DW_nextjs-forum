@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
         });
         return NextResponse.json({ message: "Vote retiré" });
       } else {
-        // Sinon on le met à jour
         await prisma.vote.update({
           where: { id: existingVote.id },
           data: { type },

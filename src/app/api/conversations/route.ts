@@ -37,7 +37,6 @@ export async function GET() {
     },
   });
 
-  // Calculer le score de vote et le vote de l'utilisateur pour chaque conversation
   const conversationsWithVotes = conversations.map((conversation) => {
     const upvotes = conversation.votes.filter(
       (v) => v.type === VoteType.UP
