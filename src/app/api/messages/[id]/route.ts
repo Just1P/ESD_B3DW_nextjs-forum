@@ -2,6 +2,79 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await requireAuth();
+    const { id } = await params;
+    const body = await request.json();
+
+    const message = await prisma.message.findUnique({
+      where: { id },
+      select: {
+        userId: true,
+        deletedAt: true,
+      },
+    });
+
+    if (!message) {
+      return NextResponse.json(
+        { error: "Message non trouvé" },
+        { status: 404 }
+      );
+    }
+
+    if (message.deletedAt) {
+      return NextResponse.json(
+        { error: "Ce message a été supprimé" },
+        { status: 410 }
+      );
+    }
+
+    if (message.userId !== user.id) {
+      return NextResponse.json(
+        { error: "Vous n'êtes pas autorisé à modifier ce message" },
+        { status: 403 }
+      );
+    }
+
+    if (!body.content || body.content.trim() === "") {
+      return NextResponse.json(
+        { error: "Le contenu du message ne peut pas être vide" },
+        { status: 400 }
+      );
+    }
+
+    const updatedMessage = await prisma.message.update({
+      where: { id },
+      data: {
+        content: body.content.trim(),
+        updatedAt: new Date(),
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(updatedMessage);
+  } catch (error) {
+    console.error("Erreur lors de la modification du message:", error);
+    return NextResponse.json(
+      { error: "Authentification requise" },
+      { status: 401 }
+    );
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -10,7 +83,6 @@ export async function DELETE(
     const user = await requireAuth();
     const { id } = await params;
 
-    // Vérifier que le message existe et récupérer son auteur
     const message = await prisma.message.findUnique({
       where: { id },
       select: {
@@ -33,7 +105,6 @@ export async function DELETE(
       );
     }
 
-    // Vérifier que l'utilisateur est bien l'auteur du message
     if (message.userId !== user.id) {
       return NextResponse.json(
         { error: "Vous n'êtes pas autorisé à supprimer ce message" },

@@ -1,5 +1,5 @@
 import { Message } from "@/generated/prisma";
-import { MessageDTO } from "@/types/message.type";
+import { MessageDTO, UpdateMessageDTO } from "@/types/message.type";
 
 interface FetchMessageParams {
   conversationId?: string;
@@ -39,6 +39,20 @@ export async function createMessage(messageDTO: MessageDTO) {
   return response.json();
 }
 
+export async function updateMessage(id: string, updateDTO: UpdateMessageDTO) {
+  const response = await fetch(`/api/messages/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updateDTO),
+  });
+  if (!response.ok) {
+    throw new Error("Échec de la modification du message");
+  }
+  return response.json();
+}
+
 export async function deleteById(id: string) {
   const response = await fetch(`/api/messages/${id}`, {
     method: "DELETE",
@@ -52,6 +66,7 @@ export async function deleteById(id: string) {
 const MessageService = {
   fetchMessages,
   createMessage,
+  updateMessage,
   deleteById,
   deleteMessage: deleteById,
 };
