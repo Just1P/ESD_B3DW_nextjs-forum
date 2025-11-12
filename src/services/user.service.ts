@@ -65,4 +65,82 @@ export const userService = {
     });
     return !!user;
   },
+
+  async getUserWithContributions(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        bio: true,
+        createdAt: true,
+        conversations: {
+          select: {
+            id: true,
+            title: true,
+            createdAt: true,
+            _count: {
+              select: {
+                messages: true,
+                votes: true,
+              },
+            },
+            votes: {
+              select: {
+                type: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        messages: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            conversationId: true,
+            Conversation: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        _count: {
+          select: {
+            conversations: true,
+            messages: true,
+            votes: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Calculer le score de votes pour chaque conversation
+    const conversationsWithVoteScore = user.conversations.map((conv) => {
+      const voteScore = conv.votes.reduce((acc, vote) => {
+        return acc + (vote.type === "UP" ? 1 : -1);
+      }, 0);
+      return {
+        ...conv,
+        voteScore,
+      };
+    });
+
+    return {
+      ...user,
+      conversations: conversationsWithVoteScore,
+    };
+  },
 };

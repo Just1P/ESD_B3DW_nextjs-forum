@@ -1,5 +1,4 @@
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -20,52 +19,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const verification = await prisma.verification.findFirst({
-      where: {
-        value: token,
-        expiresAt: {
-          gt: new Date(),
-        },
+    // Utiliser l'API Better Auth pour réinitialiser le mot de passe
+    const response = await auth.api.resetPassword({
+      body: {
+        token,
+        newPassword: password,
       },
     });
 
-    if (!verification) {
+    if (response.error) {
       return NextResponse.json(
-        { error: "Token invalide ou expiré" },
+        { error: response.error.message || "Erreur lors de la réinitialisation" },
         { status: 400 }
       );
     }
-
-    const user = await prisma.user.findUnique({
-      where: { email: verification.identifier },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Utilisateur introuvable" },
-        { status: 404 }
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await prisma.account.updateMany({
-      where: {
-        userId: user.id,
-        providerId: "credential",
-      },
-      data: {
-        password: hashedPassword,
-      },
-    });
-
-    await prisma.verification.delete({
-      where: { id: verification.id },
-    });
-
-    await prisma.session.deleteMany({
-      where: { userId: user.id },
-    });
 
     return NextResponse.json({
       message: "Mot de passe réinitialisé avec succès",

@@ -28,3 +28,34 @@ export type SignInCredentials = {
 };
 
 export type PublicUser = Pick<User, "id" | "name" | "image" | "bio">;
+
+export type UserWithContributions = Pick<
+  User,
+  "id" | "name" | "image" | "bio" | "createdAt"
+> & {
+  conversations: Array<{
+    id: string;
+    title: string | null;
+    createdAt: Date;
+    voteScore: number;
+    _count?: {
+      messages: number;
+      votes: number;
+    };
+  }>;
+  messages: Array<{
+    id: string;
+    content: string;
+    createdAt: Date;
+    conversationId: string | null;
+    Conversation: {
+      id: string;
+      title: string | null;
+    } | null;
+  }>;
+  _count: {
+    conversations: number;
+    messages: number;
+    votes: number;
+  };
+};
