@@ -1,7 +1,3 @@
-/**
- * Client API de base pour standardiser les appels HTTP
- */
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -17,9 +13,6 @@ export interface ApiRequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean>;
 }
 
-/**
- * Client API centralisé avec gestion d'erreurs
- */
 export class ApiClient {
   private baseUrl: string;
 
@@ -27,9 +20,6 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  /**
-   * Construit l'URL avec les paramètres de requête
-   */
   private buildUrl(
     path: string,
     params?: Record<string, string | number | boolean>
@@ -47,9 +37,6 @@ export class ApiClient {
     return queryString ? `${url}?${queryString}` : url;
   }
 
-  /**
-   * Gère la réponse et les erreurs HTTP
-   */
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
       let errorData;
@@ -66,17 +53,12 @@ export class ApiClient {
       );
     }
 
-    // Gérer les réponses vides (204 No Content)
     if (response.status === 204) {
       return undefined as T;
     }
 
     return response.json();
   }
-
-  /**
-   * Effectue une requête GET
-   */
   async get<T>(path: string, options?: ApiRequestOptions): Promise<T> {
     const url = this.buildUrl(path, options?.params);
     const response = await fetch(url, {
@@ -86,9 +68,6 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  /**
-   * Effectue une requête POST
-   */
   async post<T, D = unknown>(
     path: string,
     data?: D,
@@ -107,9 +86,6 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  /**
-   * Effectue une requête PATCH
-   */
   async patch<T, D = unknown>(
     path: string,
     data?: D,
@@ -128,9 +104,6 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  /**
-   * Effectue une requête PUT
-   */
   async put<T, D = unknown>(
     path: string,
     data?: D,
@@ -149,9 +122,6 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  /**
-   * Effectue une requête DELETE
-   */
   async delete<T>(path: string, options?: ApiRequestOptions): Promise<T> {
     const url = this.buildUrl(path, options?.params);
     const response = await fetch(url, {
@@ -162,5 +132,4 @@ export class ApiClient {
   }
 }
 
-// Instance par défaut
 export const apiClient = new ApiClient();

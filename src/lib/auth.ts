@@ -1,9 +1,16 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { ROLE_VALUES } from "./roles";
 import { sendPasswordResetEmail } from "./email";
 import { env } from "./env";
 import { prisma } from "./prisma";
+
+const isGoogleProviderConfigured =
+  Boolean(process.env.GOOGLE_CLIENT_ID) &&
+  Boolean(process.env.GOOGLE_CLIENT_SECRET);
+
+const isGithubProviderConfigured =
+  Boolean(process.env.GITHUB_CLIENT_ID) &&
+  Boolean(process.env.GITHUB_CLIENT_SECRET);
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -30,7 +37,6 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: "USER",
-        enum: ROLE_VALUES,
       },
     },
   },
@@ -39,6 +45,27 @@ export const auth = betterAuth({
     "http://localhost:3000",
     ...(env.appUrl ? [env.appUrl] : []),
   ],
+  socialProviders:
+    isGoogleProviderConfigured || isGithubProviderConfigured
+      ? {
+          ...(isGoogleProviderConfigured
+            ? {
+                google: {
+                  clientId: process.env.GOOGLE_CLIENT_ID as string,
+                  clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+                },
+              }
+            : {}),
+          ...(isGithubProviderConfigured
+            ? {
+                github: {
+                  clientId: process.env.GITHUB_CLIENT_ID as string,
+                  clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+                },
+              }
+            : {}),
+        }
+      : undefined,
   advanced: {
     disableCSRFCheck: env.isDevelopment,
   },

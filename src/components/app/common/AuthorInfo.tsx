@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Role } from "@/generated/prisma";
 import { formatDistanceToNow } from "@/lib/date";
@@ -25,10 +25,6 @@ interface AuthorInfoProps {
   showRoleBadge?: boolean;
 }
 
-/**
- * Composant réutilisable pour afficher les informations d'un auteur
- * (nom, date, badge "modifié", etc.)
- */
 export function AuthorInfo({
   author,
   createdAt,
