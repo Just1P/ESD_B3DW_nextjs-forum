@@ -1,5 +1,9 @@
 import type { Role } from "@/generated/prisma";
-import { ROLE_DESCRIPTIONS, ROLE_LABELS, roleBadgeClassName } from "@/lib/roles";
+import {
+  ROLE_DESCRIPTIONS,
+  ROLE_LABELS,
+  roleBadgeClassName,
+} from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 interface RoleBadgeProps {
@@ -13,6 +17,10 @@ export function RoleBadge({
   className,
   withDescription = false,
 }: RoleBadgeProps) {
+  if (role === "USER") {
+    return null;
+  }
+
   return (
     <span
       className={cn(
@@ -26,4 +34,3 @@ export function RoleBadge({
     </span>
   );
 }
-

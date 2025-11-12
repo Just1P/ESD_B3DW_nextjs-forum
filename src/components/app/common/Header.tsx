@@ -42,6 +42,12 @@ export function Header() {
           <Button variant="ghost" size="sm" asChild className="h-8">
             <Link href="/">Accueil</Link>
           </Button>
+          {session?.user &&
+            (session.user as AuthenticatedUser).role === "ADMIN" && (
+              <Button variant="ghost" size="sm" asChild className="h-8">
+                <Link href="/admin">Admin</Link>
+              </Button>
+            )}
         </nav>
 
         <div className="flex items-center gap-2">

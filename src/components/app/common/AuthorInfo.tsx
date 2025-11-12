@@ -1,3 +1,5 @@
+'use client';
+
 import { Role } from "@/generated/prisma";
 import { formatDistanceToNow } from "@/lib/date";
 import { getDisplayName } from "@/lib/user-utils";

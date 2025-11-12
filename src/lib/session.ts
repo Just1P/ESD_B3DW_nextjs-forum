@@ -39,3 +39,13 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
   }
   return session.user as AuthenticatedUser;
 }
+
+export async function requireAdmin(): Promise<AuthenticatedUser> {
+  const user = await requireAuth();
+
+  if (user.role !== "ADMIN") {
+    throw new Error("Accès administrateur requis");
+  }
+
+  return user;
+}
