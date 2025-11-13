@@ -113,9 +113,21 @@ export async function DELETE(
     return NextResponse.json(deletedConversation);
   } catch (error) {
     console.error("Erreur lors de la suppression de la conversation:", error);
+    if (
+      error instanceof Error &&
+      error.message === "Authentification requise"
+    ) {
+      return NextResponse.json(
+        { error: "Authentification requise" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
-      { error: "Authentification requise" },
-      { status: 401 }
+      {
+        error: "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur inconnue",
+      },
+      { status: 500 }
     );
   }
 }

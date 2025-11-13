@@ -100,9 +100,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(conversation);
   } catch (error) {
     console.error("Erreur lors de la création de la conversation:", error);
+    if (
+      error instanceof Error &&
+      error.message === "Authentification requise"
+    ) {
+      return NextResponse.json(
+        { error: "Authentification requise" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
-      { error: "Authentification requise" },
-      { status: 401 }
+      {
+        error: "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur inconnue",
+      },
+      { status: 500 }
     );
   }
 }

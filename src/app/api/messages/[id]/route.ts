@@ -73,9 +73,21 @@ export async function PATCH(
     return NextResponse.json(updatedMessage);
   } catch (error) {
     console.error("Erreur lors de la modification du message:", error);
+    if (
+      error instanceof Error &&
+      error.message === "Authentification requise"
+    ) {
+      return NextResponse.json(
+        { error: "Authentification requise" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
-      { error: "Authentification requise" },
-      { status: 401 }
+      {
+        error: "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur inconnue",
+      },
+      { status: 500 }
     );
   }
 }
@@ -130,9 +142,21 @@ export async function DELETE(
     return NextResponse.json(deletedMessage);
   } catch (error) {
     console.error("Erreur lors de la suppression du message:", error);
+    if (
+      error instanceof Error &&
+      error.message === "Authentification requise"
+    ) {
+      return NextResponse.json(
+        { error: "Authentification requise" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
-      { error: "Authentification requise" },
-      { status: 401 }
+      {
+        error: "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur inconnue",
+      },
+      { status: 500 }
     );
   }
 }

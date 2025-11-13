@@ -45,10 +45,51 @@ export async function POST(request: NextRequest) {
     const user = await requireAuth();
     const body = await request.json();
 
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Corps de requête invalide" },
+        { status: 400 }
+      );
+    }
+
+    const { content, conversationId } = body as {
+      content?: unknown;
+      conversationId?: unknown;
+    };
+
+    if (typeof conversationId !== "string" || conversationId.trim() === "") {
+      return NextResponse.json(
+        { error: "Une conversation valide est requise" },
+        { status: 400 }
+      );
+    }
+
+    if (typeof content !== "string" || content.trim() === "") {
+      return NextResponse.json(
+        { error: "Le contenu du message ne peut pas être vide" },
+        { status: 400 }
+      );
+    }
+
+    const conversation = await prisma.conversation.findUnique({
+      where: { id: conversationId },
+      select: {
+        id: true,
+        deletedAt: true,
+      },
+    });
+
+    if (!conversation || conversation.deletedAt) {
+      return NextResponse.json(
+        { error: "Conversation introuvable ou supprimée" },
+        { status: 404 }
+      );
+    }
+
     const message = await prisma.message.create({
       data: {
-        content: body.content,
-        conversationId: body.conversationId,
+        content: content.trim(),
+        conversationId,
         userId: user.id,
       },
       include: {
@@ -58,7 +99,7 @@ export async function POST(request: NextRequest) {
             name: true,
             email: true,
             image: true,
-          role: true,
+            role: true,
           },
         },
       },
@@ -67,9 +108,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(message);
   } catch (error) {
     console.error("Erreur lors de la création du message:", error);
+    if (
+      error instanceof Error &&
+      error.message === "Authentification requise"
+    ) {
+      return NextResponse.json(
+        { error: "Authentification requise" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
-      { error: "Authentification requise" },
-      { status: 401 }
+      {
+        error: "Erreur serveur",
+        message: error instanceof Error ? error.message : "Erreur inconnue",
+      },
+      { status: 500 }
     );
   }
 }
