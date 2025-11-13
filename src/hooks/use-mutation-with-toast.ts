@@ -2,6 +2,7 @@ import {
   useMutation,
   UseMutationOptions,
   useQueryClient,
+  type QueryKey,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -12,9 +13,7 @@ interface MutationWithToastOptions<TData, TVariables, TError = Error>
   > {
   successMessage?: string;
   errorMessage?: string;
-  invalidateQueries?:
-    | ReadonlyArray<string>
-    | ReadonlyArray<ReadonlyArray<string>>;
+  invalidateQueries?: QueryKey | ReadonlyArray<QueryKey>;
   onSuccess?: (data: TData, variables: TVariables) => void | Promise<void>;
   onError?: (error: TError, variables: TVariables) => void;
 }
@@ -41,18 +40,24 @@ export function useMutationWithToast<
       }
 
       if (invalidateQueries) {
-        const isNestedArray =
-          Array.isArray(invalidateQueries) &&
-          invalidateQueries.length > 0 &&
-          Array.isArray(invalidateQueries[0]);
+        let queries: ReadonlyArray<QueryKey>;
 
-        const queries = isNestedArray
-          ? (invalidateQueries as ReadonlyArray<ReadonlyArray<string>>)
-          : [invalidateQueries as ReadonlyArray<string>];
+        if (Array.isArray(invalidateQueries)) {
+          const first = invalidateQueries[0];
+          if (Array.isArray(first)) {
+            queries = invalidateQueries as ReadonlyArray<QueryKey>;
+          } else {
+            queries = [invalidateQueries as QueryKey];
+          }
+        } else {
+          queries = [invalidateQueries];
+        }
 
         await Promise.all(
           queries.map((queryKey) =>
-            queryClient.invalidateQueries({ queryKey: [...queryKey] })
+            queryClient.invalidateQueries({
+              queryKey: [...queryKey],
+            })
           )
         );
       }

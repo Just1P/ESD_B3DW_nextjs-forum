@@ -1,12 +1,14 @@
 "use client";
 
-import { UserAvatar } from "@/components/app/common/UserAvatar";
 import { AuthorInfo } from "@/components/app/common/AuthorInfo";
+import { UserAvatar } from "@/components/app/common/UserAvatar";
+import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/auth-client";
 import { canModerateContent, isAdmin } from "@/lib/roles";
 import type { AuthenticatedUser } from "@/lib/session";
-import MessageService, { type MessageWithAuthor } from "@/services/message.service";
-import { Button } from "@/components/ui/button";
+import MessageService, {
+  type MessageWithAuthor,
+} from "@/services/message.service";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import DeleteButton from "../common/DeleteButton";
@@ -33,16 +35,12 @@ export default function MessageItem({ message }: MessageItemProps) {
     <div className="bg-white border-l-2 border-transparent hover:border-gray-300 transition-colors">
       <div className="flex gap-3 p-4">
         <div className="flex flex-col items-center gap-2 pt-1">
-          <UserAvatar 
-            user={message.author}
-            size="sm"
-            withLink
-          />
+          <UserAvatar user={message.author} size="sm" withLink />
           <div className="w-0.5 bg-gray-200 flex-1 min-h-[20px]"></div>
         </div>
 
         <div className="flex-1 min-w-0">
-          <AuthorInfo 
+          <AuthorInfo
             author={message.author}
             createdAt={message.createdAt}
             updatedAt={message.updatedAt}
@@ -55,6 +53,7 @@ export default function MessageItem({ message }: MessageItemProps) {
           {isEditing ? (
             <MessageEditForm
               messageId={message.id}
+              conversationId={message.conversationId}
               currentContent={message.content}
               onCancel={() => setIsEditing(false)}
             />
@@ -80,7 +79,7 @@ export default function MessageItem({ message }: MessageItemProps) {
               {canDelete && (
                 <DeleteButton
                   entityName="Message"
-                  queryKey="messages"
+                  queryKey={["messages", message.conversationId ?? "all"]}
                   onDelete={MessageService.deleteById}
                   id={message.id}
                 />

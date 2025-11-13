@@ -5,6 +5,7 @@ import MessageService from "@/services/message.service";
 import MessageItem from "./MessageItem";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QUERY_KEYS } from "@/lib/constants";
 
 interface MessageListProps {
   conversationId?: string;
@@ -12,7 +13,7 @@ interface MessageListProps {
 
 export default function MessageList({ conversationId }: MessageListProps) {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["messages"],
+    queryKey: QUERY_KEYS.MESSAGES(conversationId),
     queryFn: async () => {
       return await MessageService.fetchMessages({ conversationId });
     },
@@ -55,7 +56,9 @@ export default function MessageList({ conversationId }: MessageListProps) {
   if (isError) {
     return (
       <div className="bg-white border border-gray-200 rounded-md p-6 text-center">
-        <p className="text-red-600">Erreur lors du chargement des messages.</p>
+        <p className="text-red-600">
+          Erreur lors du chargement des messages.
+        </p>
       </div>
     );
   }
@@ -63,7 +66,9 @@ export default function MessageList({ conversationId }: MessageListProps) {
   if (!data || data.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-md p-8 text-center">
-        <p className="text-gray-500">Aucun commentaire pour le moment. Soyez le premier à répondre !</p>
+        <p className="text-gray-500">
+          Aucun commentaire pour le moment. Soyez le premier à répondre !
+        </p>
       </div>
     );
   }

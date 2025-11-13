@@ -5,6 +5,7 @@ import MessageForm from "@/components/app/message/MessageForm";
 import MessageList from "@/components/app/message/MessageList";
 import { env } from "@/lib/env";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,17 @@ export default async function ConversationDetailPage({
   const response = await fetch(`${baseUrl}/api/conversations/${id}`, {
     cache: "no-store",
   });
+
+  if (response.status === 404) {
+    notFound();
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Impossible de charger la conversation (${response.status})`
+    );
+  }
+
   const conversation = await response.json();
 
   return (

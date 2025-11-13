@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
 import DeleteButton from "@/components/app/common/DeleteButton";
 import { useSession } from "@/lib/auth-client";
+import { QUERY_KEYS } from "@/lib/constants";
 import { canModerateContent } from "@/lib/roles";
 import type { AuthenticatedUser } from "@/lib/session";
-import ConversationService from "@/services/conversation.service";
 import { cn } from "@/lib/utils";
+import ConversationService from "@/services/conversation.service";
 
 interface ConversationDeleteButtonProps {
   className?: string;
@@ -42,7 +43,7 @@ export default function ConversationDeleteButton({
       entityName="Conversation"
       id={id}
       onDelete={ConversationService.deleteById}
-      queryKey="conversations"
+      queryKey={QUERY_KEYS.CONVERSATIONS}
     />
   );
 }

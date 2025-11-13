@@ -3,20 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { SUCCESS_MESSAGES, ERROR_MESSAGES, QUERY_KEYS } from "@/lib/constants";
 import { useMutationWithToast } from "@/hooks/use-mutation-with-toast";
+import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
 import MessageService from "@/services/message.service";
 import { UpdateMessageDTO } from "@/types/message.type";
 import { useForm } from "react-hook-form";
 
 interface MessageEditFormProps {
   messageId: string;
+  conversationId?: string | null;
   currentContent: string;
   onCancel: () => void;
 }
 
 export default function MessageEditForm({
   messageId,
+  conversationId,
   currentContent,
   onCancel,
 }: MessageEditFormProps) {
@@ -31,7 +33,7 @@ export default function MessageEditForm({
       MessageService.updateMessage(messageId, data),
     successMessage: SUCCESS_MESSAGES.MESSAGE_UPDATED,
     errorMessage: ERROR_MESSAGES.MESSAGE_UPDATE_FAILED,
-    invalidateQueries: QUERY_KEYS.MESSAGES,
+    invalidateQueries: QUERY_KEYS.MESSAGES(conversationId),
     onSuccess: () => {
       onCancel();
     },

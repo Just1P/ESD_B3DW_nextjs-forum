@@ -28,7 +28,7 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
       }),
     successMessage: SUCCESS_MESSAGES.MESSAGE_CREATED,
     errorMessage: ERROR_MESSAGES.MESSAGE_CREATE_FAILED,
-    invalidateQueries: QUERY_KEYS.MESSAGES,
+    invalidateQueries: QUERY_KEYS.MESSAGES(conversationId),
     onSuccess: () => {
       reset();
     },

@@ -1,4 +1,3 @@
-
 export const SUCCESS_MESSAGES = {
   SIGN_IN: "Connexion réussie !",
   SIGN_UP: "Inscription réussie !",
@@ -87,7 +86,10 @@ export const QUERY_KEYS = {
   SESSION: ["session"],
   CONVERSATIONS: ["conversations"],
   CONVERSATION: (id: string) => ["conversation", id],
-  MESSAGES: ["messages"],
+  MESSAGES: (conversationId?: string | null) => [
+    "messages",
+    conversationId ?? "all",
+  ],
   MESSAGE: (id: string) => ["message", id],
   USER: (id: string) => ["user", id],
   CURRENT_USER: ["currentUser"],

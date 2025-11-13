@@ -8,11 +8,13 @@ import { toast } from "sonner";
 interface MessageButtonDeleteProps {
   className?: string;
   id: string;
+  conversationId?: string | null;
 }
 
 export default function MessageButtonDelete({
   className,
   id,
+  conversationId,
 }: MessageButtonDeleteProps) {
   const queryClient = useQueryClient();
 
@@ -22,7 +24,9 @@ export default function MessageButtonDelete({
     },
     onSuccess: () => {
       toast.success("Message supprimé avec succès !");
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
+      queryClient.invalidateQueries({
+        queryKey: ["messages", conversationId ?? "all"],
+      });
     },
   });
 
