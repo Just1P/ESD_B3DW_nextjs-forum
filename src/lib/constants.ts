@@ -67,7 +67,7 @@ export const VALIDATION = {
     MAX_LENGTH: 5000,
   },
   IMAGE: {
-    MAX_SIZE: 5 * 1024 * 1024, // 5MB
+    MAX_SIZE: 5 * 1024 * 1024,
     ACCEPTED_TYPES: ["image/png", "image/jpeg", "image/jpg", "image/webp"],
   },
 } as const;
@@ -101,4 +101,18 @@ export const DURATIONS = {
   ANIMATION_SHORT: 150,
   ANIMATION_MEDIUM: 300,
   ANIMATION_LONG: 500,
+} as const;
+
+export const API_ERROR_MESSAGES = {
+  INVALID_REQUEST_BODY: "Corps de requête invalide",
+  INVALID_ID: "Identifiant invalide",
+  CONVERSATION_NOT_FOUND: "Conversation non trouvée",
+  CONVERSATION_DELETED: "Cette conversation a été supprimée",
+  MESSAGE_NOT_FOUND: "Message non trouvé",
+  MESSAGE_DELETED: "Ce message a été supprimé",
+  USER_NOT_FOUND: "Utilisateur non trouvé",
+  VOTE_NOT_FOUND: "Vote non trouvé",
+  CANNOT_MODIFY_OTHERS: "Vous ne pouvez pas modifier le contenu d'autres utilisateurs",
+  CANNOT_DELETE_OTHERS: "Vous ne pouvez pas supprimer le contenu d'autres utilisateurs",
+  ADMIN_ONLY: "Cette action nécessite les privilèges administrateur",
 } as const;
