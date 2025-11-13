@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: "Le fichier est trop volumineux (max 5MB)" },
