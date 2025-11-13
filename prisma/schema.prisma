@@ -21,11 +21,11 @@ model Conversation {
   messages Message[]
   votes    Vote[]
 
-  author User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
+  author User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
+  updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
   archivedAt DateTime?
 
@@ -36,15 +36,15 @@ model Message {
   id      String @id @default(cuid())
   content String
 
-  author User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
+  author User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
-  Conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  conversationId String?
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
 
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
-  deletedAt  DateTime?
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
   archivedAt DateTime?
 
   @@map("message")
@@ -112,7 +112,7 @@ model Verification {
   value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  updatedAt  DateTime @updatedAt
 
   @@map("verification")
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/spinner";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface PrivateLayoutProps {
   children: React.ReactNode;
@@ -31,5 +31,5 @@ export default function PrivateLayout({ children }: PrivateLayoutProps) {
     return null;
   }
 
-  return <div className="container py-8">{children}</div>;
+  return <div className="container py-8 mx-auto">{children}</div>;
 }

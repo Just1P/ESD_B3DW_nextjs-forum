@@ -106,7 +106,7 @@ export const userService = {
             content: true,
             createdAt: true,
             conversationId: true,
-            Conversation: {
+            conversation: {
               select: {
                 id: true,
                 title: true,
