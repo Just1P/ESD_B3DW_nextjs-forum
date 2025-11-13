@@ -64,6 +64,7 @@ export class ApiClient {
     const response = await fetch(url, {
       ...options,
       method: "GET",
+      credentials: "include",
     });
     return this.handleResponse<T>(response);
   }
@@ -81,6 +82,7 @@ export class ApiClient {
         "Content-Type": "application/json",
         ...options?.headers,
       },
+      credentials: "include",
       body: data ? JSON.stringify(data) : undefined,
     });
     return this.handleResponse<T>(response);
@@ -99,6 +101,7 @@ export class ApiClient {
         "Content-Type": "application/json",
         ...options?.headers,
       },
+      credentials: "include",
       body: data ? JSON.stringify(data) : undefined,
     });
     return this.handleResponse<T>(response);
@@ -117,6 +120,7 @@ export class ApiClient {
         "Content-Type": "application/json",
         ...options?.headers,
       },
+      credentials: "include",
       body: data ? JSON.stringify(data) : undefined,
     });
     return this.handleResponse<T>(response);
@@ -127,6 +131,7 @@ export class ApiClient {
     const response = await fetch(url, {
       ...options,
       method: "DELETE",
+      credentials: "include",
     });
     return this.handleResponse<T>(response);
   }
