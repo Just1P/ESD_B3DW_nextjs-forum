@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,7 +33,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
-          <OAuthCallback />
+          <Suspense fallback={null}>
+            <OAuthCallback />
+          </Suspense>
           <ConditionalHeader />
           <main>{children}</main>
         </ReactQueryProvider>

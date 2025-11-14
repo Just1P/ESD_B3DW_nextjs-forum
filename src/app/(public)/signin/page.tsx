@@ -8,13 +8,13 @@ import { useEffect } from "react";
 
 export default function SignInPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
 
   useEffect(() => {
-    if (session?.user) {
+    if (!isPending && session?.user) {
       router.push("/");
     }
-  }, [session, router]);
+  }, [session, isPending, router]);
 
   return (
     <AuthLayout>

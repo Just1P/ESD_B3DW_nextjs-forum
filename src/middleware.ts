@@ -43,7 +43,6 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isProtectedRoute(pathname) || isAdminRoute(pathname)) {
-    // Check if user has a session cookie
     const hasSession = hasSessionCookie(request);
 
     if (!hasSession) {
@@ -58,9 +57,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // For admin routes, we'll do a more thorough check in the API route itself
-    // Middleware just ensures there's a session cookie
-    // Full role verification happens server-side in API routes/server components
     return NextResponse.next();
   }
 
