@@ -1,3 +1,4 @@
+import { OAuthCallback } from "@/components/app/auth/OAuthCallback";
 import { ConditionalHeader } from "@/components/app/common/ConditionalHeader";
 import { Toaster } from "@/components/ui/sonner";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
+          <OAuthCallback />
           <ConditionalHeader />
           <main>{children}</main>
         </ReactQueryProvider>

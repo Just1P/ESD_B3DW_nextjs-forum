@@ -108,6 +108,7 @@ export function SignInForm() {
     try {
       const { data, error } = await signIn.social({
         provider: "google",
+        callbackURL: "/?oauth=success",
       });
 
       if (error) {
@@ -120,6 +121,7 @@ export function SignInForm() {
         return;
       }
 
+      toast.success(SUCCESS_MESSAGES.SIGN_IN);
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -136,6 +138,7 @@ export function SignInForm() {
     try {
       const { data, error } = await signIn.social({
         provider: "github",
+        callbackURL: "/?oauth=success",
       });
 
       if (error) {
@@ -148,6 +151,7 @@ export function SignInForm() {
         return;
       }
 
+      toast.success(SUCCESS_MESSAGES.SIGN_IN);
       router.push("/");
       router.refresh();
     } catch (error) {
