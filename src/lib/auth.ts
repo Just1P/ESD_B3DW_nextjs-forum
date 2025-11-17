@@ -37,6 +37,7 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: "USER",
+        returnValue: true, // Inclure le rôle dans la session
       },
     },
   },
