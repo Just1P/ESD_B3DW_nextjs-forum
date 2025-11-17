@@ -109,11 +109,11 @@ export default async function AdminDashboardPage() {
 
   try {
     const admin = await requireAdmin();
+    console.log("✅ Admin authentifié:", { id: admin.id, role: admin.role });
     adminId = admin.id;
   } catch (error) {
-    console.error("Accès refusé au dashboard admin:", error);
+    console.error("❌ Accès refusé au dashboard admin:", error);
     redirect("/");
-    return null;
   }
 
   let dashboardData;
