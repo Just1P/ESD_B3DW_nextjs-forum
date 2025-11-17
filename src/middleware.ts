@@ -45,7 +45,10 @@ export async function middleware(request: NextRequest) {
   if (isProtectedRoute(pathname) || isAdminRoute(pathname)) {
     const hasSession = hasSessionCookie(request);
 
+    console.log(`🔐 Middleware - Route: ${pathname}, Has session: ${hasSession}`);
+
     if (!hasSession) {
+      console.log(`❌ Middleware - No session, redirecting to signin`);
       if (pathname.startsWith("/api/")) {
         return NextResponse.json(
           { error: "Authentification requise" },
@@ -57,6 +60,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
+    console.log(`✅ Middleware - Session found, allowing access to ${pathname}`);
     return NextResponse.next();
   }
 
