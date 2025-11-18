@@ -112,7 +112,7 @@ export default async function AdminDashboardPage() {
     adminId = admin.id;
   } catch (error) {
     console.error("Erreur lors de la vérification des droits admin:", error);
-    redirect("/");
+    redirect("/unauthorized");
   }
 
   let dashboardData;
