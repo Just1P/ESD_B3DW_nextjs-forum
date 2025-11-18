@@ -49,7 +49,7 @@ export function ImageCropDialog({
       onCropComplete(croppedImage, fileName);
       onOpenChange(false);
     } catch (error) {
-      // Error silently handled
+      console.error("Erreur lors du recadrage de l'image:", error);
     } finally {
       setIsProcessing(false);
     }

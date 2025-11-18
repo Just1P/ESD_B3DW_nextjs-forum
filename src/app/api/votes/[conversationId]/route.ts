@@ -27,6 +27,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Vote supprimé" });
   } catch (error) {
+    console.error("Erreur lors de la suppression du vote:", error);
     return NextResponse.json({ message: "Erreur serveur" }, { status: 500 });
   }
 }

@@ -11,6 +11,7 @@ export async function getServerSession(): Promise<Session | null> {
     });
     return session;
   } catch (error) {
+    console.error("Erreur lors de la récupération de la session:", error);
     return null;
   }
 }

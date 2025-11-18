@@ -95,6 +95,7 @@ export function SignInForm() {
         router.refresh();
       }
     } catch (error) {
+      console.error("Erreur lors de la connexion:", error);
       toast.error(ERROR_MESSAGES.GENERIC);
     } finally {
       setIsLoading(false);
@@ -124,6 +125,7 @@ export function SignInForm() {
       router.push("/");
       router.refresh();
     } catch (error) {
+      console.error("Erreur lors de la connexion Google:", error);
       toast.error(ERROR_MESSAGES.GENERIC);
     } finally {
       setIsGoogleLoading(false);
@@ -153,6 +155,7 @@ export function SignInForm() {
       router.push("/");
       router.refresh();
     } catch (error) {
+      console.error("Erreur lors de la connexion GitHub:", error);
       toast.error(ERROR_MESSAGES.GENERIC);
     } finally {
       setIsGithubLoading(false);

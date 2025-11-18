@@ -58,6 +58,7 @@ export default function ForgotPasswordPage() {
       setIsSuccess(true);
       toast.success("Email envoyé ! Vérifiez votre boîte de réception.");
     } catch (error) {
+      console.error("Erreur lors de l'envoi de l'email de réinitialisation:", error);
       toast.error("Une erreur est survenue. Veuillez réessayer.");
     } finally{
       setIsLoading(false);
