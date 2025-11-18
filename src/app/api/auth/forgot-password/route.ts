@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
       message: "Si cet email existe, un lien de réinitialisation a été envoyé.",
     });
   } catch (error) {
-    console.error("Erreur lors de la demande de réinitialisation:", error);
     return NextResponse.json({
       message: "Si cet email existe, un lien de réinitialisation a été envoyé.",
     });

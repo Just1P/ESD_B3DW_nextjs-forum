@@ -65,7 +65,6 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
 
-    console.error("Erreur lors de la mise à jour du profil:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

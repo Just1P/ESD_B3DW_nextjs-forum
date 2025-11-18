@@ -24,9 +24,6 @@ export default function ConversationForm() {
       reset();
       router.push(`/conversations/${data.id}`);
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 
   const onSubmit = async (data: ConversationDTO) => {

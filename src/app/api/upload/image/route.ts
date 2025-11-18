@@ -20,12 +20,6 @@ export async function POST(req: NextRequest) {
         .filter((key) => key.includes("BLOB") || key.includes("TOKEN"))
         .join(", ");
 
-      console.error("❌ Aucun token Vercel Blob n'est configuré");
-      console.error(
-        "Variables d'environnement disponibles (contenant BLOB ou TOKEN):",
-        availableEnvVars || "aucune"
-      );
-
       return NextResponse.json(
         {
           error: "Service d'upload non configuré",
@@ -87,13 +81,6 @@ export async function POST(req: NextRequest) {
       error.message === "Authentification requise"
     ) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-    }
-
-    console.error("❌ Erreur détaillée lors de l'upload:", error);
-
-    if (error instanceof Error) {
-      console.error("Message:", error.message);
-      console.error("Stack:", error.stack);
     }
 
     return NextResponse.json(

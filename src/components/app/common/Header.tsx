@@ -30,7 +30,6 @@ export function Header() {
       router.push("/signin");
       router.refresh();
     } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
       toast.error(ERROR_MESSAGES.GENERIC);
     }
   };

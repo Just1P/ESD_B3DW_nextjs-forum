@@ -68,9 +68,6 @@ export const auth = betterAuth({
             : {}),
         }
       : undefined,
-  advanced: {
-    disableCSRFCheck: env.isDevelopment,
-  },
 });
 
 export type Session = typeof auth.$Infer.Session;

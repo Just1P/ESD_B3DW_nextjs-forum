@@ -18,7 +18,6 @@ export default async function ConversationDetailPage({
 }: ConversationDetailPageProps) {
   const { id } = await params;
 
-  console.log("ID de la conversation:", id);
   const baseUrl = env.appUrl;
   const response = await fetch(`${baseUrl}/api/conversations/${id}`, {
     cache: "no-store",

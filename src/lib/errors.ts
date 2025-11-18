@@ -92,8 +92,6 @@ export function formatErrorResponse(
 }
 
 export function handleApiError(error: unknown): NextResponse {
-  console.error("API Error:", error);
-
   if (error instanceof ZodError) {
     return NextResponse.json(
       formatErrorResponse(

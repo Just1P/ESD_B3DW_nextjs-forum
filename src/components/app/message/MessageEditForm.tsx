@@ -37,9 +37,6 @@ export default function MessageEditForm({
     onSuccess: () => {
       onCancel();
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 
   const onSubmit = async (data: UpdateMessageDTO) => {

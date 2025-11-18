@@ -106,7 +106,6 @@ export function SignUpForm() {
         router.refresh();
       }
     } catch (error) {
-      console.error("Erreur d'inscription:", error);
       toast.error(ERROR_MESSAGES.GENERIC);
     } finally {
       setIsLoading(false);

@@ -36,7 +36,6 @@ export async function GET() {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
 
-    console.error("Erreur lors de la récupération du profil:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

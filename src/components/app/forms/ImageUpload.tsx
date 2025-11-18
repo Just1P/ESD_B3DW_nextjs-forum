@@ -55,7 +55,6 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("❌ Détails de l'erreur serveur:", errorData);
         throw new Error(
           errorData.details || errorData.error || "Erreur lors de l'upload"
         );
@@ -73,7 +72,6 @@ export function ImageUpload({ value, onChange, userName }: ImageUploadProps) {
 
       toast.success(SUCCESS_MESSAGES.IMAGE_UPLOADED);
     } catch (error) {
-      console.error("Erreur lors de l'upload:", error);
       toast.error(
         error instanceof Error
           ? error.message

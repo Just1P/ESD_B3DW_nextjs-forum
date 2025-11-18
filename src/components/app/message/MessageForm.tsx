@@ -32,9 +32,6 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
     onSuccess: () => {
       reset();
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 
   const onSubmit = async (data: MessageDTO) => {

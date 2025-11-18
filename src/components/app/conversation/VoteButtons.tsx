@@ -55,7 +55,6 @@ export default function VoteButtons({
         setVoteScore(context.previousScore);
         setUserVote(context.previousVote);
       }
-      console.error("Erreur lors du vote:", error);
       toast.error("Erreur lors du vote");
     },
   });

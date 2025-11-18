@@ -92,7 +92,6 @@ export default function ResetPasswordPage({ params }: ResetPasswordPageProps) {
       toast.success("Mot de passe réinitialisé avec succès !");
       router.push("/signin");
     } catch (error) {
-      console.error("Erreur:", error);
       toast.error("Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setIsLoading(false);
