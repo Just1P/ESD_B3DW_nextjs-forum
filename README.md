@@ -7,6 +7,7 @@ Forum web moderne permettant aux utilisateurs d'échanger publiquement ou en pri
 ## 🚀 Démarrage rapide
 
 ### Prérequis
+
 - Node.js v18+
 - Docker & Docker Compose
 
@@ -18,7 +19,7 @@ git clone https://github.com/Just1P/ESD_B3DW_nextjs-forum.git
 cd ESD_B3DW_nextjs-forum
 npm install
 
-# 2. Copier le fichier d'environnement
+# 2. Copier le fichier d'environnement et le placer dans votre .env
 cp .env.example .env
 
 # 3. Générer le secret d'authentification
@@ -47,25 +48,17 @@ L'application sera disponible sur **[http://localhost:3000](http://localhost:300
 - **Vercel Blob** (stockage images)
 - **Resend** (emails)
 
-## 📋 Commandes utiles
-
-```bash
-npm run dev              # Développement
-npm run build            # Build production
-npm run seed             # Peupler la base de données
-npx prisma studio        # Interface graphique Prisma
-docker compose up -d     # Démarrer PostgreSQL
-```
-
 ## 🔧 Configuration
 
 Les variables d'environnement essentielles sont dans [.env.example](.env.example).
 
 **Obligatoires :**
+
 - `DATABASE_URL` : Connexion PostgreSQL (fournie par Docker)
 - `BETTER_AUTH_SECRET` : Secret d'authentification (à générer)
 
 **Optionnelles :**
+
 - OAuth Google/GitHub : Pour l'authentification sociale
 - Resend : Pour l'envoi d'emails
 - Vercel Blob : Pour uploader des images de profil
