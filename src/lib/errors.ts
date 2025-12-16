@@ -57,6 +57,12 @@ export class ConflictError extends AppError {
   }
 }
 
+export class BadRequestError extends AppError {
+  constructor(message: string = "Requête invalide") {
+    super(message, HTTP_STATUS.BAD_REQUEST, "BAD_REQUEST");
+  }
+}
+
 export interface ErrorResponse {
   error: string;
   code?: string;

@@ -12,7 +12,7 @@ import {
 import { signOut, useSession } from "@/lib/auth-client";
 import type { AuthenticatedUser } from "@/lib/session";
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from "@/lib/constants";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings, User, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -42,6 +42,11 @@ export function Header() {
           <Button variant="ghost" size="sm" asChild className="h-8">
             <Link href="/">Accueil</Link>
           </Button>
+          {session?.user && (
+            <Button variant="ghost" size="sm" asChild className="h-8">
+              <Link href="/messages">Messages</Link>
+            </Button>
+          )}
           {session?.user &&
             (session.user as AuthenticatedUser).role === "ADMIN" && (
               <Button variant="ghost" size="sm" asChild className="h-8">
@@ -88,6 +93,12 @@ export function Header() {
                   <Link href="/account" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     <span>Mon profil</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/messages" className="cursor-pointer">
+                    <Mail className="mr-2 h-4 w-4" />
+                    <span>Mes messages</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

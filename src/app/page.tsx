@@ -1,6 +1,7 @@
 import ConversationForm from "@/components/app/conversation/ConversationForm";
 import ConversationListWithSort from "@/components/app/conversation/ConversationListWithSort";
 import { isAuthenticated } from "@/lib/session";
+import { IconPlus } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function Home() {
             <div className="bg-white border border-gray-200 rounded-md p-4 hover:border-gray-300 transition-colors">
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-gray-400 text-xl">+</span>
+                  <IconPlus className="text-gray-400" size={24} />
                 </div>
                 <h2 className="text-base font-medium text-gray-700">
                   Créer une nouvelle conversation
