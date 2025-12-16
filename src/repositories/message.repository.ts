@@ -18,10 +18,11 @@ export class MessageRepository {
             role: true,
           },
         },
-        conversation: {
+        Conversation: {
           select: {
             id: true,
             title: true,
+            isPrivate: true,
           },
         },
       },
@@ -44,10 +45,11 @@ export class MessageRepository {
             role: true,
           },
         },
-        conversation: {
+        Conversation: {
           select: {
             id: true,
             title: true,
+            isPrivate: true,
           },
         },
       },
@@ -75,10 +77,11 @@ export class MessageRepository {
             role: true,
           },
         },
-        conversation: {
+        Conversation: {
           select: {
             id: true,
             title: true,
+            isPrivate: true,
           },
         },
       },
@@ -99,10 +102,11 @@ export class MessageRepository {
             role: true,
           },
         },
-        conversation: {
+        Conversation: {
           select: {
             id: true,
             title: true,
+            isPrivate: true,
           },
         },
       },
@@ -143,10 +147,11 @@ export class MessageRepository {
         deletedAt: null,
       },
       include: {
-        conversation: {
+        Conversation: {
           select: {
             id: true,
             title: true,
+            isPrivate: true,
           },
         },
       },

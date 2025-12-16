@@ -14,6 +14,9 @@ export type MessageWithAuthor = Message & {
     image: string | null;
     role: Role;
   } | null;
+  Conversation?: {
+    isPrivate: boolean;
+  } | null;
 };
 
 export async function fetchMessages(

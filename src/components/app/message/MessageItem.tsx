@@ -28,8 +28,12 @@ export default function MessageItem({ message }: MessageItemProps) {
   const isAuthor = sessionUser?.id === message.author?.id;
   const isAdminUser = isAdmin(sessionUser?.role);
   const canModerate = canModerateContent(sessionUser?.role);
-  const canEdit = isAuthor || isAdminUser;
-  const canDelete = isAuthor || canModerate;
+  const isPrivateConversation = message.Conversation?.isPrivate ?? false;
+
+  // Pour les conversations privées, seul l'auteur peut modifier/supprimer
+  // Pour les conversations publiques, l'auteur ou un admin/modérateur peut agir
+  const canEdit = isPrivateConversation ? isAuthor : (isAuthor || isAdminUser);
+  const canDelete = isPrivateConversation ? isAuthor : (isAuthor || canModerate);
 
   return (
     <div className="bg-white border-l-2 border-transparent hover:border-gray-300 transition-colors">
