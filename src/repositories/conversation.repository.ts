@@ -3,11 +3,27 @@ import { Conversation, VoteType } from "@/generated/prisma";
 import { ConversationWithExtend } from "@/types/conversation.type";
 
 export class ConversationRepository {
-  async findAll(userId?: string): Promise<ConversationWithExtend[]> {
+  async findAll(
+    userId?: string,
+    tagNames?: string[]
+  ): Promise<ConversationWithExtend[]> {
     const conversations = await prisma.conversation.findMany({
       where: {
         deletedAt: null,
         isPrivate: false,
+        ...(tagNames && tagNames.length > 0
+          ? {
+              tags: {
+                some: {
+                  tag: {
+                    name: {
+                      in: tagNames,
+                    },
+                  },
+                },
+              },
+            }
+          : {}),
       },
       include: {
         author: {
@@ -23,6 +39,11 @@ export class ConversationRepository {
           select: {
             type: true,
             userId: true,
+          },
+        },
+        tags: {
+          include: {
+            tag: true,
           },
         },
         messages: {
@@ -45,6 +66,7 @@ export class ConversationRepository {
       userVote: userId
         ? this.getUserVote(conversation.votes, userId)
         : null,
+      tags: conversation.tags?.map((t) => t.tag) ?? [],
     }));
   }
 
@@ -82,6 +104,11 @@ export class ConversationRepository {
             userId: true,
           },
         },
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
         messages: {
           where: {
             deletedAt: null,
@@ -110,6 +137,7 @@ export class ConversationRepository {
       ...conversation,
       voteScore: this.calculateVoteScore(conversation.votes),
       userVote: userId ? this.getUserVote(conversation.votes, userId) : null,
+      tags: conversation.tags?.map((t) => t.tag) ?? [],
     };
   }
 

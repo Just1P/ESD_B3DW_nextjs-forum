@@ -4,8 +4,15 @@ import {
   ConversationWithExtend,
 } from "@/types/conversation.type";
 
-async function fetchConversations() {
-  return apiClient.get<ConversationWithExtend[]>("/conversations");
+async function fetchConversations(tags?: string[]) {
+  return apiClient.get<ConversationWithExtend[]>("/conversations", {
+    params:
+      tags && tags.length > 0
+        ? {
+            tags: tags.join(","),
+          }
+        : undefined,
+  });
 }
 
 async function fetchConversationById(id: string) {

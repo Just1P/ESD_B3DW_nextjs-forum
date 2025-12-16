@@ -4,20 +4,22 @@ import ConversationService from "@/services/conversation.service";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import ConversationCard from "./ConversationCard";
+import TagFilter from "./TagFilter";
 
 type SortType = "recent" | "popular";
 
 export default function ConversationListWithSort() {
   const [sortType, setSortType] = useState<SortType>("recent");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const {
     data: conversations = [],
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["conversations"],
+    queryKey: ["conversations", { tags: selectedTags }],
     queryFn: async () => {
-      return await ConversationService.fetchConversations();
+      return await ConversationService.fetchConversations(selectedTags);
     },
   });
 
@@ -37,7 +39,7 @@ export default function ConversationListWithSort() {
 
   return (
     <>
-      <div className="mb-3 px-4">
+      <div className="mb-1 px-4">
         <div className="flex items-center gap-2 text-sm">
           <button
             onClick={() => setSortType("recent")}
@@ -61,6 +63,8 @@ export default function ConversationListWithSort() {
           </button>
         </div>
       </div>
+
+      <TagFilter selectedTags={selectedTags} onChange={setSelectedTags} />
 
       <div className="container mx-auto px-4">
         {isLoading ? (

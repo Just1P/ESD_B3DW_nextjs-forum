@@ -4,11 +4,19 @@ import { handleApiError, successResponse, createdResponse } from "@/lib/errors";
 import { conversationService } from "@/services/server";
 import { createConversationSchema } from "@/schemas";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
+    const { searchParams } = new URL(request.url);
+    const tagsParam = searchParams.get("tags");
+    const tagNames =
+      tagsParam && tagsParam.trim().length > 0
+        ? tagsParam.split(",").map((t) => t.trim()).filter(Boolean)
+        : undefined;
+
     const conversations = await conversationService.getAllConversations(
-      currentUser?.id
+      currentUser?.id,
+      tagNames
     );
 
     return successResponse(conversations);
