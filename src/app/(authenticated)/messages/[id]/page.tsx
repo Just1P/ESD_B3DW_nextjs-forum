@@ -1,10 +1,11 @@
 import { requireAuth } from "@/lib/session";
-import { env } from "@/lib/env";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MessageForm from "@/components/app/message/MessageForm";
 import MessageList from "@/components/app/message/MessageList";
 import Image from "next/image";
+import { privateConversationService } from "@/services/server";
+import { ForbiddenError } from "@/lib/errors";
 
 interface Participant {
   userId: string;
@@ -33,43 +34,36 @@ export default async function MessageDetailPage({
   const user = await requireAuth();
   const { id } = await params;
 
-  const baseUrl = env.appUrl;
-  const response = await fetch(`${baseUrl}/api/private-conversations/${id}`, {
-    cache: "no-store",
-  });
+  let conversation: ConversationData;
 
-  if (response.status === 404) {
+  try {
+    conversation = await privateConversationService.getPrivateConversationById(
+      id,
+      user.id
+    );
+  } catch (error) {
+    if (error instanceof ForbiddenError) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="bg-white border border-red-200 rounded-md p-8 max-w-md">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              Accès refusé
+            </h1>
+            <p className="text-gray-700 mb-6">
+              Vous n&apos;avez pas accès à cette conversation privée.
+            </p>
+            <Link
+              href="/messages"
+              className="inline-flex items-center text-blue-600 hover:text-blue-700"
+            >
+              <span className="mr-1">←</span> Retour à mes messages
+            </Link>
+          </div>
+        </div>
+      );
+    }
     notFound();
   }
-
-  if (response.status === 403) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white border border-red-200 rounded-md p-8 max-w-md">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">
-            Accès refusé
-          </h1>
-          <p className="text-gray-700 mb-6">
-            Vous n&apos;avez pas accès à cette conversation privée.
-          </p>
-          <Link
-            href="/messages"
-            className="inline-flex items-center text-blue-600 hover:text-blue-700"
-          >
-            <span className="mr-1">←</span> Retour à mes messages
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      `Impossible de charger la conversation (${response.status})`
-    );
-  }
-
-  const conversation = (await response.json()) as ConversationData;
 
   const otherParticipant = conversation.participants?.find(
     (p) => p.userId !== user.id

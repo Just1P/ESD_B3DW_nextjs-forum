@@ -35,7 +35,7 @@ export const conversationIdSchema = z.object({
 });
 
 export const createPrivateConversationSchema = z.object({
-  recipientId: z.string().cuid("ID d'utilisateur invalide"),
+  recipientId: z.string().min(1, "ID d'utilisateur requis"),
 });
 
 export type CreateConversationInput = z.infer<typeof createConversationSchema>;

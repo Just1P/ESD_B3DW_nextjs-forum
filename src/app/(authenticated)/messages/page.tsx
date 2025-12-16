@@ -1,8 +1,7 @@
 import { requireAuth } from "@/lib/session";
-import { env } from "@/lib/env";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import Image from "next/image";
+import { privateConversationService } from "@/services/server";
 
 interface Participant {
   userId: string;
@@ -32,25 +31,9 @@ export const dynamic = "force-dynamic";
 export default async function MessagesPage() {
   const user = await requireAuth();
 
-  const baseUrl = env.appUrl;
-  const response = await fetch(`${baseUrl}/api/private-conversations`, {
-    cache: "no-store",
-    headers: {
-      Cookie: `better-auth.session_token=${user.id}`,
-    },
-  });
-
-  if (response.status === 404) {
-    notFound();
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      `Impossible de charger les conversations privées (${response.status})`
-    );
-  }
-
-  const conversations = await response.json();
+  const conversations = await privateConversationService.getPrivateConversations(
+    user.id
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
