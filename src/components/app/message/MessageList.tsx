@@ -63,21 +63,13 @@ export default function MessageList({ conversationId }: MessageListProps) {
     );
   }
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="bg-white border border-gray-200 rounded-md p-8 text-center">
-        <p className="text-gray-500">
-          Aucun commentaire pour le moment. Soyez le premier à répondre !
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col divide-y divide-gray-200 border border-gray-200 rounded-md overflow-hidden bg-white">
-      {data.map((message) => (
-        <MessageItem key={message.id} message={message} />
-      ))}
+      {data && data.length > 0 ? (
+        data.map((message) => (
+          <MessageItem key={message.id} message={message} />
+        ))
+      ) : null}
     </div>
   );
 }

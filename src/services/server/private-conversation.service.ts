@@ -88,8 +88,11 @@ export class PrivateConversationService {
       userId
     );
 
-    if (!isParticipant && !isAdmin) {
-      throw new ForbiddenError(API_ERROR_MESSAGES.CANNOT_DELETE_OTHERS);
+    // Pour les conversations privées, seuls les participants peuvent supprimer, jamais les admins
+    if (!isParticipant) {
+      throw new ForbiddenError(
+        "Vous ne pouvez pas supprimer les conversations privées des autres utilisateurs"
+      );
     }
 
     await conversationRepository.softDelete(id);

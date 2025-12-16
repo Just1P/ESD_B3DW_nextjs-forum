@@ -55,9 +55,29 @@ export class MessageService {
       throw new NotFoundError(API_ERROR_MESSAGES.MESSAGE_NOT_FOUND);
     }
 
-    const isAuthor = await messageRepository.isAuthor(id, userId);
-    if (!isAuthor && !isAdmin) {
-      throw new ForbiddenError(API_ERROR_MESSAGES.CANNOT_MODIFY_OTHERS);
+    const message = await messageRepository.findById(id);
+    if (!message) {
+      throw new NotFoundError(API_ERROR_MESSAGES.MESSAGE_NOT_FOUND);
+    }
+
+    // Vérifier si le message appartient à une conversation privée
+    const conversation = await conversationRepository.findById(
+      message.conversationId
+    );
+    if (conversation?.isPrivate) {
+      // Pour les conversations privées, seul l'auteur peut modifier, jamais les admins
+      const isAuthor = await messageRepository.isAuthor(id, userId);
+      if (!isAuthor) {
+        throw new ForbiddenError(
+          "Vous ne pouvez pas modifier les messages privés des autres utilisateurs"
+        );
+      }
+    } else {
+      // Pour les conversations publiques, l'auteur ou un admin peut modifier
+      const isAuthor = await messageRepository.isAuthor(id, userId);
+      if (!isAuthor && !isAdmin) {
+        throw new ForbiddenError(API_ERROR_MESSAGES.CANNOT_MODIFY_OTHERS);
+      }
     }
 
     return messageRepository.update(id, content);
@@ -73,9 +93,29 @@ export class MessageService {
       throw new NotFoundError(API_ERROR_MESSAGES.MESSAGE_NOT_FOUND);
     }
 
-    const isAuthor = await messageRepository.isAuthor(id, userId);
-    if (!isAuthor && !isAdmin) {
-      throw new ForbiddenError(API_ERROR_MESSAGES.CANNOT_DELETE_OTHERS);
+    const message = await messageRepository.findById(id);
+    if (!message) {
+      throw new NotFoundError(API_ERROR_MESSAGES.MESSAGE_NOT_FOUND);
+    }
+
+    // Vérifier si le message appartient à une conversation privée
+    const conversation = await conversationRepository.findById(
+      message.conversationId
+    );
+    if (conversation?.isPrivate) {
+      // Pour les conversations privées, seul l'auteur peut supprimer, jamais les admins
+      const isAuthor = await messageRepository.isAuthor(id, userId);
+      if (!isAuthor) {
+        throw new ForbiddenError(
+          "Vous ne pouvez pas supprimer les messages privés des autres utilisateurs"
+        );
+      }
+    } else {
+      // Pour les conversations publiques, l'auteur ou un admin peut supprimer
+      const isAuthor = await messageRepository.isAuthor(id, userId);
+      if (!isAuthor && !isAdmin) {
+        throw new ForbiddenError(API_ERROR_MESSAGES.CANNOT_DELETE_OTHERS);
+      }
     }
 
     await messageRepository.softDelete(id);
