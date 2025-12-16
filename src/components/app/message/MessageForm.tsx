@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "@/lib/auth-client";
 import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
+import type { AuthenticatedUser } from "@/lib/session";
 import MessageService, {
   type MessageWithAuthor,
 } from "@/services/message.service";
@@ -22,6 +23,10 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
   const { register, handleSubmit, watch, reset } = useForm<MessageDTO>();
   const { data: session, isPending } = useSession();
   const queryClient = useQueryClient();
+  const sessionUser =
+    session?.user && "role" in session.user
+      ? (session.user as AuthenticatedUser)
+      : undefined;
 
   const mutation = useMutation({
     mutationFn: (data: MessageDTO) =>
@@ -34,8 +39,6 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
         queryClient.getQueryData<MessageWithAuthor[]>(
           QUERY_KEYS.MESSAGES(conversationId)
         ) || [];
-
-      const sessionUser: any = session?.user;
 
       const now = new Date();
 
