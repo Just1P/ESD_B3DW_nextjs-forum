@@ -39,8 +39,7 @@ export async function DELETE(
 
     await privateConversationService.deletePrivateConversation(
       id,
-      user.id,
-      user.role === "ADMIN"
+      user.id
     );
 
     return successResponse({ message: "Conversation supprimée avec succès" });
