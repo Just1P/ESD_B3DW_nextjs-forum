@@ -6,6 +6,8 @@ import { formatDistanceToNow } from "@/lib/date";
 import { UserWithContributions } from "@/types/user.type";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import StartConversationButton from "@/components/app/message/StartConversationButton";
+import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +19,7 @@ export default async function UserProfilePage({
   params,
 }: UserProfilePageProps) {
   const { id } = await params;
+  const currentUser = await getCurrentUser();
 
   const baseUrl = env.appUrl;
   const response = await fetch(`${baseUrl}/api/user/${id}`, {
@@ -53,6 +56,14 @@ export default async function UserProfilePage({
                   <RoleBadge role={user.role} withDescription />
                 </div>
                 {user.bio && <p className="text-gray-600 mb-4">{user.bio}</p>}
+                {currentUser && currentUser.id !== user.id && (
+                  <div className="mb-4">
+                    <StartConversationButton
+                      recipientId={user.id}
+                      recipientName={user.name || "cet utilisateur"}
+                    />
+                  </div>
+                )}
                 <div className="flex gap-6 text-sm text-gray-500">
                   <div>
                     <span className="font-semibold text-gray-900">

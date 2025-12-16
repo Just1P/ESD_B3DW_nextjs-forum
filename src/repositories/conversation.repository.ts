@@ -7,6 +7,7 @@ export class ConversationRepository {
     const conversations = await prisma.conversation.findMany({
       where: {
         deletedAt: null,
+        isPrivate: false,
       },
       include: {
         author: {
@@ -167,6 +168,102 @@ export class ConversationRepository {
   ): VoteType | null {
     const userVote = votes.find((v) => v.userId === userId);
     return userVote?.type || null;
+  }
+
+  async findPrivateConversations(
+    userId: string
+  ): Promise<ConversationWithExtend[]> {
+    const conversations = await prisma.conversation.findMany({
+      where: {
+        deletedAt: null,
+        isPrivate: true,
+        participants: {
+          some: {
+            userId,
+          },
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
+          },
+        },
+        participants: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        votes: {
+          select: {
+            type: true,
+            userId: true,
+          },
+        },
+        messages: {
+          where: {
+            deletedAt: null,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    return conversations.map((conversation) => ({
+      ...conversation,
+      voteScore: this.calculateVoteScore(conversation.votes),
+      userVote: this.getUserVote(conversation.votes, userId),
+    }));
+  }
+
+  async createPrivateConversation(
+    userId: string,
+    otherUserId: string
+  ): Promise<Conversation> {
+    return prisma.conversation.create({
+      data: {
+        userId,
+        isPrivate: true,
+        participants: {
+          create: [{ userId }, { userId: otherUserId }],
+        },
+      },
+    });
+  }
+
+  async findExistingPrivateConversation(
+    userId1: string,
+    userId2: string
+  ): Promise<Conversation | null> {
+    return prisma.conversation.findFirst({
+      where: {
+        isPrivate: true,
+        deletedAt: null,
+        participants: {
+          every: {
+            userId: {
+              in: [userId1, userId2],
+            },
+          },
+        },
+      },
+    });
   }
 }
 

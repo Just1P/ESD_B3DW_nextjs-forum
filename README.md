@@ -1,6 +1,6 @@
 # 🗨️ Forum Next.js
 
-Forum web moderne permettant aux utilisateurs d'échanger publiquement ou en privé.
+Forum web moderne permettant aux utilisateurs d'échanger publiquement ou en privé via des conversations privées.
 
 **🌐 Application en ligne :** [https://esd-b3-dw-nextjs-forum.vercel.app/](https://esd-b3-dw-nextjs-forum.vercel.app/)
 
@@ -62,3 +62,32 @@ Les variables d'environnement essentielles sont dans [.env.example](.env.example
 - OAuth Google/GitHub : Pour l'authentification sociale
 - Resend : Pour l'envoi d'emails
 - Vercel Blob : Pour uploader des images de profil
+
+## ✨ Fonctionnalités
+
+### Forum Public
+- Créer et participer à des discussions publiques
+- Système de votes (upvote/downvote) sur les conversations
+- Commentaires et réponses sur les discussions
+- Profils utilisateurs avec statistiques
+
+### Messages Privés
+- Conversations privées entre 2 utilisateurs
+- Interface dédiée pour gérer vos messages
+- Démarrer une conversation depuis le profil d'un utilisateur
+- Historique des conversations avec aperçu du dernier message
+- Sécurité : seuls les participants peuvent voir et participer
+
+### Authentification & Sécurité
+- Authentification par email/mot de passe
+- OAuth avec Google et GitHub
+- Gestion de session sécurisée avec Better Auth
+- Système de rôles (USER, MODERATOR, ADMIN)
+- Réinitialisation de mot de passe par email
+
+### Interface Utilisateur
+- Design moderne et responsive avec Tailwind CSS
+- Navigation intuitive
+- Composants UI avec Radix UI
+- Images de profil personnalisables
+- Thème cohérent et professionnel

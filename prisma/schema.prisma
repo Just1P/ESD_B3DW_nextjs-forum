@@ -16,11 +16,13 @@ datasource db {
 }
 
 model Conversation {
-  id    String  @id @default(cuid())
-  title String?
+  id        String  @id @default(cuid())
+  title     String?
+  isPrivate Boolean @default(false)
 
-  messages Message[]
-  votes    Vote[]
+  messages     Message[]
+  votes        Vote[]
+  participants ConversationParticipant[]
 
   author User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
@@ -59,9 +61,10 @@ model User {
   bio   String?
   role  Role    @default(USER)
 
-  conversations Conversation[]
-  messages      Message[]
-  votes         Vote[]
+  conversations            Conversation[]
+  messages                 Message[]
+  votes                    Vote[]
+  conversationParticipants ConversationParticipant[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -71,6 +74,18 @@ model User {
   accounts      Account[]
 
   @@map("user")
+}
+
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  joinedAt       DateTime     @default(now())
+
+  @@unique([userId, conversationId])
+  @@map("conversation_participant")
 }
 
 model Session {
