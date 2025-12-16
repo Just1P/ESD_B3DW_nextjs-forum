@@ -19,6 +19,11 @@ export default function StartConversationButton({
     try {
       setIsLoading(true);
 
+      console.log("Tentative de création de conversation avec:", {
+        recipientId,
+        recipientName,
+      });
+
       const response = await fetch("/api/private-conversations", {
         method: "POST",
         headers: {
@@ -28,14 +33,22 @@ export default function StartConversationButton({
       });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de la création de la conversation");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Erreur API:", errorData);
+        throw new Error(
+          errorData.error || "Erreur lors de la création de la conversation"
+        );
       }
 
       const conversation = await response.json();
       router.push(`/messages/${conversation.id}`);
     } catch (error) {
-      console.error("Erreur:", error);
-      alert("Impossible de démarrer la conversation");
+      console.error("Erreur complète:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Impossible de démarrer la conversation"
+      );
     } finally {
       setIsLoading(false);
     }
