@@ -6,21 +6,7 @@ import MessageList from "@/components/app/message/MessageList";
 import Image from "next/image";
 import { privateConversationService } from "@/services/server";
 import { ForbiddenError } from "@/lib/errors";
-
-interface Participant {
-  userId: string;
-  user: {
-    id: string;
-    name: string | null;
-    email: string;
-    image: string | null;
-  };
-}
-
-interface ConversationData {
-  id: string;
-  participants?: Participant[];
-}
+import { ConversationWithExtend } from "@/types/conversation.type";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +20,7 @@ export default async function MessageDetailPage({
   const user = await requireAuth();
   const { id } = await params;
 
-  let conversation: ConversationData;
+  let conversation: ConversationWithExtend;
 
   try {
     conversation = await privateConversationService.getPrivateConversationById(

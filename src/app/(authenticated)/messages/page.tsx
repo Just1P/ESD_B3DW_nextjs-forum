@@ -3,29 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { privateConversationService } from "@/services/server";
 
-interface Participant {
-  userId: string;
-  user: {
-    id: string;
-    name: string | null;
-    email: string;
-    image: string | null;
-  };
-}
-
-interface MessageData {
-  id: string;
-  content: string;
-  userId: string;
-  createdAt: string;
-}
-
-interface ConversationData {
-  id: string;
-  participants?: Participant[];
-  messages: MessageData[];
-}
-
 export const dynamic = "force-dynamic";
 
 export default async function MessagesPage() {
@@ -66,7 +43,7 @@ export default async function MessagesPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {(conversations as ConversationData[]).map((conversation) => {
+            {conversations.map((conversation) => {
               const otherParticipant = conversation.participants?.find(
                 (p) => p.userId !== user.id
               );

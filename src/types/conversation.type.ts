@@ -9,6 +9,15 @@ export interface ConversationWithExtend extends Conversation {
     image: string | null;
     role: Role;
   } | null;
+  participants?: {
+    userId: string;
+    user: {
+      id: string;
+      name: string | null;
+      email: string;
+      image: string | null;
+    };
+  }[];
   _count?: {
     votes: number;
   };
