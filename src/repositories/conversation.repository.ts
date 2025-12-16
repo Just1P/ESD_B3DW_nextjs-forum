@@ -64,6 +64,18 @@ export class ConversationRepository {
             role: true,
           },
         },
+        participants: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
         votes: {
           select: {
             type: true,
