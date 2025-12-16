@@ -70,8 +70,7 @@ export class PrivateConversationService {
 
   async deletePrivateConversation(
     id: string,
-    userId: string,
-    isAdmin: boolean = false
+    userId: string
   ): Promise<void> {
     const exists = await conversationRepository.exists(id);
     if (!exists) {

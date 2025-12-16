@@ -14,7 +14,9 @@ export type MessageWithAuthor = Message & {
     image: string | null;
     role: Role;
   } | null;
-  Conversation?: {
+  conversation?: {
+    id: string;
+    title: string | null;
     isPrivate: boolean;
   } | null;
 };

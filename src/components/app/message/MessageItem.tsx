@@ -26,13 +26,12 @@ export default function MessageItem({ message }: MessageItemProps) {
       : undefined;
   const [isEditing, setIsEditing] = useState(false);
   const isAuthor = sessionUser?.id === message.author?.id;
-  const isAdminUser = isAdmin(sessionUser?.role);
   const canModerate = canModerateContent(sessionUser?.role);
-  const isPrivateConversation = message.Conversation?.isPrivate ?? false;
+  const isPrivateConversation = message.conversation?.isPrivate ?? false;
 
   // Pour les conversations privées, seul l'auteur peut modifier/supprimer
   // Pour les conversations publiques, l'auteur ou un admin/modérateur peut agir
-  const canEdit = isPrivateConversation ? isAuthor : (isAuthor || isAdminUser);
+  const canEdit = isPrivateConversation ? isAuthor : (isAuthor || isAdmin(sessionUser?.role));
   const canDelete = isPrivateConversation ? isAuthor : (isAuthor || canModerate);
 
   return (

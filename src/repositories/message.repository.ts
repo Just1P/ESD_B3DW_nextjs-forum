@@ -18,7 +18,7 @@ export class MessageRepository {
             role: true,
           },
         },
-        Conversation: {
+        conversation: {
           select: {
             id: true,
             title: true,
@@ -45,7 +45,7 @@ export class MessageRepository {
             role: true,
           },
         },
-        Conversation: {
+        conversation: {
           select: {
             id: true,
             title: true,
@@ -77,7 +77,7 @@ export class MessageRepository {
             role: true,
           },
         },
-        Conversation: {
+        conversation: {
           select: {
             id: true,
             title: true,
@@ -102,7 +102,7 @@ export class MessageRepository {
             role: true,
           },
         },
-        Conversation: {
+        conversation: {
           select: {
             id: true,
             title: true,
@@ -147,7 +147,7 @@ export class MessageRepository {
         deletedAt: null,
       },
       include: {
-        Conversation: {
+        conversation: {
           select: {
             id: true,
             title: true,
