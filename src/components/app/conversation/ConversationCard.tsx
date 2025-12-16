@@ -54,8 +54,7 @@ export default function ConversationCard({
                 {conversation?.title}
               </h3>
             </Link>
-
-            <div className="flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center justify-between gap-4 text-xs text-gray-500">
               <Link
                 href={`/conversations/${conversation.id}`}
                 className="flex items-center gap-1 hover:bg-gray-100 rounded px-2 py-1 transition-colors"
@@ -66,6 +65,19 @@ export default function ConversationCard({
                   {conversation?.messages.length <= 1 ? "réponse" : "réponses"}
                 </span>
               </Link>
+
+              {conversation.tags && conversation.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {conversation.tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 text-[11px] font-medium"
+                    >
+                      #{tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

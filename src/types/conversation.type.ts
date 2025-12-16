@@ -1,4 +1,4 @@
-import { Conversation, Message, Role, VoteType } from "@/generated/prisma";
+import { Conversation, Message, Role, VoteType, Tag } from "@/generated/prisma";
 
 export interface ConversationWithExtend extends Conversation {
   messages: Message[];
@@ -27,6 +27,7 @@ export interface ConversationWithExtend extends Conversation {
   }[];
   voteScore?: number;
   userVote?: VoteType | null;
+  tags?: Tag[];
 }
 
 export interface ConversationDTO {

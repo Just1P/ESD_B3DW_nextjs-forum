@@ -6,9 +6,10 @@ import { Conversation } from "@/generated/prisma";
 
 export class ConversationService {
   async getAllConversations(
-    userId?: string
+    userId?: string,
+    tagNames?: string[]
   ): Promise<ConversationWithExtend[]> {
-    return conversationRepository.findAll(userId);
+    return conversationRepository.findAll(userId, tagNames);
   }
 
   async getConversationById(
