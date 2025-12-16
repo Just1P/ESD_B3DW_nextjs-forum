@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { useSession } from "@/lib/auth-client";
 import { ERROR_MESSAGES, QUERY_KEYS, SUCCESS_MESSAGES } from "@/lib/constants";
 import type { AuthenticatedUser } from "@/lib/session";
@@ -65,7 +64,7 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
 
       queryClient.setQueryData<MessageWithAuthor[]>(
         QUERY_KEYS.MESSAGES(conversationId),
-        [...previousMessages, optimisticMessage]
+        [optimisticMessage, ...previousMessages]
       );
 
       reset();
@@ -84,7 +83,7 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
           const withoutOptimistic = base.filter(
             (m) => !m.id.toString().startsWith("optimistic-")
           );
-          return [...withoutOptimistic, data];
+          return [data, ...withoutOptimistic];
         }
       );
     },
@@ -159,11 +158,8 @@ export default function MessageForm({ conversationId }: MessageFormProps) {
           type="submit"
           size="sm"
           className="absolute top-1/2 right-0 -translate-y-1/2 mr-2 h-8"
-          disabled={
-            !contentWatch || contentWatch.trim() === "" || mutation.isPending
-          }
+          disabled={!contentWatch || contentWatch.trim() === ""}
         >
-          {mutation.isPending && <Spinner className="mr-2" />}
           Commenter
         </Button>
       </form>
