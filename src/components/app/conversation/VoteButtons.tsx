@@ -3,10 +3,11 @@
 import { VoteType } from "@/generated/prisma";
 import { useSession } from "@/lib/auth-client";
 import VoteService from "@/services/vote.service";
+import type { ConversationWithExtend } from "@/types/conversation.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface VoteButtonsProps {
@@ -26,36 +27,16 @@ export default function VoteButtons({
   const { data: session } = useSession();
   const router = useRouter();
 
+  const lastVoteRef = useRef<VoteType | null>(initialUserVote);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const voteMutation = useMutation({
     mutationFn: async (type: VoteType) => {
       await VoteService.vote(conversationId, type);
     },
-    onMutate: async (type) => {
-      const previousScore = voteScore;
-      const previousVote = userVote;
-
-      if (userVote === type) {
-        setVoteScore(voteScore + (type === VoteType.UP ? -1 : 1));
-        setUserVote(null);
-      } else if (userVote) {
-        setVoteScore(voteScore + (type === VoteType.UP ? 2 : -2));
-        setUserVote(type);
-      } else {
-        setVoteScore(voteScore + (type === VoteType.UP ? 1 : -1));
-        setUserVote(type);
-      }
-
-      return { previousScore, previousVote };
-    },
-    onSuccess: () => {
+    onError: () => {
+      toast.error("Erreur lors de l'enregistrement du vote");
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
-    },
-    onError: (error, _type, context) => {
-      if (context) {
-        setVoteScore(context.previousScore);
-        setUserVote(context.previousVote);
-      }
-      toast.error("Erreur lors du vote");
     },
   });
 
@@ -65,7 +46,53 @@ export default function VoteButtons({
       router.push("/signin");
       return;
     }
-    voteMutation.mutate(type);
+
+    // Mise à jour optimiste immédiate de l'UI + cache liste
+    let newScore = voteScore;
+    let newVote: VoteType | null = userVote;
+
+    if (userVote === type) {
+      newScore = voteScore + (type === VoteType.UP ? -1 : 1);
+      newVote = null;
+    } else if (userVote) {
+      newScore = voteScore + (type === VoteType.UP ? 2 : -2);
+      newVote = type;
+    } else {
+      newScore = voteScore + (type === VoteType.UP ? 1 : -1);
+      newVote = type;
+    }
+
+    setVoteScore(newScore);
+    setUserVote(newVote);
+
+    queryClient.setQueryData<ConversationWithExtend[]>(
+      ["conversations"],
+      (oldConversations) => {
+        if (!oldConversations) return oldConversations;
+
+        return oldConversations.map((conversation) =>
+          conversation.id === conversationId
+            ? {
+                ...conversation,
+                voteScore: newScore,
+                userVote: newVote,
+              }
+            : conversation
+        );
+      }
+    );
+
+    // Debounce des appels API : on n'envoie que le dernier état après un court délai
+    lastVoteRef.current = newVote ?? type;
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    debounceTimeoutRef.current = setTimeout(() => {
+      const finalVote = lastVoteRef.current;
+      if (finalVote) {
+        voteMutation.mutate(finalVote);
+      }
+    }, 200);
   };
 
   return (
@@ -77,7 +104,6 @@ export default function VoteButtons({
           handleVote(VoteType.UP);
         }}
         className="hover:bg-gray-200 rounded p-1 transition-colors cursor-pointer"
-        disabled={voteMutation.isPending}
       >
         <ArrowBigUp
           className={`h-6 w-6 ${
@@ -105,7 +131,6 @@ export default function VoteButtons({
           handleVote(VoteType.DOWN);
         }}
         className="hover:bg-gray-200 rounded p-1 transition-colors cursor-pointer"
-        disabled={voteMutation.isPending}
       >
         <ArrowBigDown
           className={`h-6 w-6 ${

@@ -31,15 +31,17 @@ export default function MessageItem({ message }: MessageItemProps) {
 
   // Pour les conversations privées, seul l'auteur peut modifier/supprimer
   // Pour les conversations publiques, l'auteur ou un admin/modérateur peut agir
-  const canEdit = isPrivateConversation ? isAuthor : (isAuthor || isAdmin(sessionUser?.role));
-  const canDelete = isPrivateConversation ? isAuthor : (isAuthor || canModerate);
+  const canEdit = isPrivateConversation
+    ? isAuthor
+    : isAuthor || isAdmin(sessionUser?.role);
+  const canDelete = isPrivateConversation ? isAuthor : isAuthor || canModerate;
 
   return (
     <div className="bg-white border-l-2 border-transparent hover:border-gray-300 transition-colors">
       <div className="flex gap-3 p-4">
         <div className="flex flex-col items-center gap-2 pt-1">
           <UserAvatar user={message.author} size="sm" withLink />
-          <div className="w-0.5 bg-gray-200 flex-1 min-h-[20px]"></div>
+          <div className="w-0.5 bg-gray-200 flex-1 min-h-5"></div>
         </div>
 
         <div className="flex-1 min-w-0">

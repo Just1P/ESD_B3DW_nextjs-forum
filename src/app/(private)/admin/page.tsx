@@ -16,11 +16,15 @@ async function fetchDashboardData(adminId: string) {
       prisma.conversation.count({
         where: {
           deletedAt: null,
+          isPrivate: false,
         },
       }),
       prisma.message.count({
         where: {
           deletedAt: null,
+          conversation: {
+            isPrivate: false,
+          },
         },
       }),
       prisma.user.findMany({
@@ -32,8 +36,18 @@ async function fetchDashboardData(adminId: string) {
           createdAt: true,
           _count: {
             select: {
-              conversations: true,
-              messages: true,
+              conversations: {
+                where: {
+                  isPrivate: false,
+                },
+              },
+              messages: {
+                where: {
+                  conversation: {
+                    isPrivate: false,
+                  },
+                },
+              },
             },
           },
         },
@@ -45,6 +59,7 @@ async function fetchDashboardData(adminId: string) {
       prisma.conversation.findMany({
         where: {
           deletedAt: null,
+          isPrivate: false,
         },
         orderBy: {
           createdAt: "desc",
